@@ -19,7 +19,8 @@
   "dev": "nodemon src/index.ts",
   "build": "tsc",
   "postinstall": "prisma generate --no-engine",
-  "prepare": "prisma generate --no-engine"
+  "prepare": "prisma generate --no-engine",
+  "vercel-build": "npm run build"
 },
   "prisma": {
     "seed": "ts-node src/client/seed.ts"
