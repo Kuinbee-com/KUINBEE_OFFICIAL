@@ -3,13 +3,10 @@ import { IUnifiedResponse } from "../../utility/common/interfaces/customeRespons
 import { ICustomLogInRequest } from "../../utility/common/interfaces/customeRequestInterface";
 import { verifyPassword } from "../../utility/common/security/crypto";
 import { prisma } from "../../client/getPrismaClient";
-import { encryptData, generateAuthToken } from "../../utility/common/security/jwtUtils";
+import { generateAuthToken } from "../../utility/common/security/jwtUtils";
 import { IMinimalLoginToken } from "../../utility/common/interfaces/tokenInterface";
 import { KUINBEE_SUPER_ADMIN_IDENTITY_CODE } from "../../env";
 
-
-// ! INFORM FRONTEND ABOUR IDENTITY CODE
-// ! NEED TO TO CIPHER THE TOKEN 
 const loginPassword = async (req: ICustomLogInRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const { emailId, password } = req.body;
