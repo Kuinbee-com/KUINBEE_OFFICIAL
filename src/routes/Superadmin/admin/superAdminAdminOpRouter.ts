@@ -1,15 +1,17 @@
 import express from 'express';
-import { addAdminController } from '../../../controllers/Superadmin/admin/adminOperationsController';
-import { handleAddAdminValidation } from '../../../middlewares/superAdmin/suoerAdminOpRouteValidations';
+import { addAdmin, deleteAdmin } from '../../../controllers/Superadmin/superAdminOperationsController';
+import { handleAddAdminValidation } from '../../../middlewares/superAdmin/superAdminOpRouteValidations';
+import { getAdmin, getAllAdmins } from '../../../controllers/Superadmin/superAdminFetchController';
+import { extractIdFromParams } from '../../../utility/auth/requestUtils';
 const superAdminAdminOpRouter = express.Router();
 
 // ************************** GET *************************** //
-// superAdminAdminRouter.get();
-
+superAdminAdminOpRouter.get('/getAllAdmins', getAllAdmins);
+superAdminAdminOpRouter.get('/getAdmin/:id', extractIdFromParams, getAdmin);
 
 // ************************** POST ************************** //
 // TODO : add vadlidation before adding new admin
-superAdminAdminOpRouter.post('/addAdmin', handleAddAdminValidation, addAdminController);
+superAdminAdminOpRouter.post('/addAdmin', handleAddAdminValidation, addAdmin);
 
 
 
@@ -19,6 +21,7 @@ superAdminAdminOpRouter.post('/addAdmin', handleAddAdminValidation, addAdminCont
 
 
 // ************************** DELETE ************************** //
-// superAdminAdminRouter.delete();
+superAdminAdminOpRouter.delete('/deleteAdmin/:id', extractIdFromParams, deleteAdmin);
+
 
 export default superAdminAdminOpRouter;

@@ -18,7 +18,8 @@ interface ICustomRequest extends Request {
 }
 
 
-interface ICutomeSuperAdminRequest extends ICustomRequest {
+interface ICustomeSuperAdminRequest extends ICustomRequest {
     AdminPermissions?: SuperAdminPermissionsOptions[];
+    inputAdminId?: string
 }
-export { ICustomLogInRequest, ICustomRequest, ICutomeSuperAdminRequest };
+export { ICustomLogInRequest, ICustomRequest, ICustomeSuperAdminRequest };

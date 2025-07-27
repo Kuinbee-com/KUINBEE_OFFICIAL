@@ -1,19 +1,14 @@
 import express, { Router } from 'express';
 import { usePath } from '../../utility/pathInterface';
-import superAdminAdminOpRouter from './admin/superAdminAdminOpRouter';
 import { requireAuth } from '../../middlewares/auth/requireAuth';
-import { requireAdminAuth } from '../../middlewares/auth/requireAdminAuth';
+import { requireAdminAuth } from '../../middlewares/auth/requireSuperAdminAuth';
+import superAdminAdminRouter from './admin/superAdminAdminRouter';
 const superAdminRouter: Router = express.Router();
-
-
-
 
 
 superAdminRouter.use(requireAuth, requireAdminAuth);
 
-usePath(superAdminRouter, superAdminAdminOpRouter, '/admin');
-
-
+usePath(superAdminRouter, superAdminAdminRouter, '/admin');
 
 
 export default superAdminRouter;

@@ -39,13 +39,13 @@ model Auth {
   role      Role
   createdAt DateTime @default(now())
 
-  superAdminId String?
   adminId      String?
+  superAdminId String?
   userId       String?
 
-  superadmin SuperAdmin? @relation(fields: [superAdminId], references: [id])
-  admin      Admin?      @relation(fields: [adminId], references: [id])
-  user       User?       @relation(fields: [userId], references: [id])
+  Admin      Admin?      @relation("AdminToAuth", fields: [adminId], references: [id], onDelete: Cascade)
+  superadmin SuperAdmin? @relation(fields: [superAdminId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   PasswordDetails PasswordDetails?
 }
@@ -53,19 +53,18 @@ model Auth {
 /// ----------- Super Admin -----------
 
 model SuperAdmin {
-  id              String       @id @default(cuid())
+  id              String   @id @default(cuid())
   title           String
   firstName       String
   middleName      String?
   lastName        String
-  officialEmailId String       @unique
+  officialEmailId String   @unique
   personalEmailId String
   phNo            BigInt
   alternativePhNo BigInt?
-  createdAt       DateTime     @default(now())
-  personalInfoId  String
-  personalInfo    PersonalInfo @relation(fields: [personalInfoId], references: [id])
+  createdAt       DateTime @default(now())
 
+  PersonalInfo       PersonalInfo?      @relation("SuperAdminToPersonalInfo")
   admins             Admin[]            @relation("SuperAdminCreatedAdmins")
   updatedPermissions AdminPermissions[] @relation("UpdatedBySuperAdmin")
   Auth               Auth[]
@@ -74,49 +73,49 @@ model SuperAdmin {
 /// ----------- Admin -----------
 
 model Admin {
-  id              String           @id @default(cuid())
-  createdById     String
+  id              String   @id @default(cuid())
   title           String
   firstName       String
   middleName      String?
   lastName        String
-  officialEmailId String           @unique
+  officialEmailId String   @unique
   personalEmailId String
   phNo            BigInt
   alternativePhNo BigInt?
-  createdAt       DateTime         @default(now())
-  personalInfoId  String
-  personalInfo    PersonalInfo     @relation(fields: [personalInfoId], references: [id])
-  permissions     AdminPermissions @relation(fields: [adminPermissionsId], references: [id])
+  createdAt       DateTime @default(now())
+  createdById     String
 
   createdBy          SuperAdmin             @relation("SuperAdminCreatedAdmins", fields: [createdById], references: [id])
+  personalInfo       PersonalInfo?          @relation("AdminToPersonalInfo")
+  permissions        AdminPermissions?      @relation("AdminToPermissions")
+  Auth               Auth[]                 @relation("AdminToAuth")
   createdDatasets    Dataset[]              @relation("CreatedDatasets")
   updatedDatasets    DatasetUpdateHistory[] @relation("UpdatedDatasets")
   updatedPermissions AdminPermissions[]     @relation("UpdatedByAdmin")
-  Auth               Auth[]
-  adminPermissionsId String
 }
 
 /// ----------- Admin Permissions -----------
 
 model AdminPermissions {
-  id            String            @id @default(cuid())
-  permissions   AdminPermission[]
-  updatedById   String
-  lastUpdatedAt DateTime          @default(now())
+  id                    String            @id @default(cuid())
+  permissions           AdminPermission[]
+  updatedBySuperAdminId String?
+  updatedByAdminId      String?
+  lastUpdatedAt         DateTime          @default(now())
 
-  updatedBySuperAdmin SuperAdmin? @relation("UpdatedBySuperAdmin", fields: [updatedById], references: [id], map: "AdminPermissions_updatedBySuperAdmin_fkey")
-  updatedByAdmin      Admin?      @relation("UpdatedByAdmin", fields: [updatedById], references: [id], map: "AdminPermissions_updatedByAdmin_fkey")
-  Admin               Admin[]
+  adminId String @unique
+  admin   Admin  @relation("AdminToPermissions", fields: [adminId], references: [id], onDelete: Cascade)
+
+  updatedBySuperAdmin SuperAdmin? @relation("UpdatedBySuperAdmin", fields: [updatedBySuperAdminId], references: [id])
+  updatedByAdmin      Admin?      @relation("UpdatedByAdmin", fields: [updatedByAdminId], references: [id], onDelete: SetNull)
 }
 
 /// ----------- Personal Info -----------
-
 model PersonalInfo {
-  id          String       @id @default(cuid())
+  id          String   @id @default(cuid())
+  address     String
   aadharUrl   String?
   panCardUrl  String?
-  address     String
   fatherName  String
   motherName  String
   gender      Gender
@@ -126,8 +125,11 @@ model PersonalInfo {
   country     String
   pinCode     String
   nationality String
-  SuperAdmin  SuperAdmin[]
-  Admin       Admin[]
+
+  adminId      String?     @unique
+  superAdminId String?     @unique
+  admin        Admin?      @relation("AdminToPersonalInfo", fields: [adminId], references: [id], onDelete: Cascade)
+  superAdmin   SuperAdmin? @relation("SuperAdminToPersonalInfo", fields: [superAdminId], references: [id], onDelete: Cascade)
 }
 
 /// ----------- User -----------

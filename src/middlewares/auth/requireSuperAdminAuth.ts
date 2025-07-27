@@ -1,10 +1,10 @@
 import { Response, NextFunction } from 'express';
-import { ICutomeSuperAdminRequest } from '../../utility/common/interfaces/customeRequestInterface';
+import { ICustomeSuperAdminRequest } from '../../utility/common/interfaces/customeRequestInterface';
 import { KUINBEE_SUPER_ADMIN_IDENTITY_CODE } from '../../env';
 
-const requireAdminAuth = async (req: ICutomeSuperAdminRequest, res: Response, next: NextFunction): Promise<void> => {
+const requireAdminAuth = async (req: ICustomeSuperAdminRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        if (req.role !== 'SUPERADMIN') return void res.status(403).json({ success: false, error: 'Access denied. Admins only.' });
+        if (req.role !== 'SUPERADMIN') return void res.status(403).json({ success: false, error: 'Access denied. Super Admins only.' });
         if (req.identityToken === undefined || req.authToken === undefined || req.identityToken !== KUINBEE_SUPER_ADMIN_IDENTITY_CODE)
             return void res.status(401).json({ success: false, error: 'Authentication token is missing or invalid' });
 
