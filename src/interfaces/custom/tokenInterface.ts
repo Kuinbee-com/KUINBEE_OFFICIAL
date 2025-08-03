@@ -1,5 +1,5 @@
 import { AdminPermissions } from "@prisma/client";
-import { RoleOptions } from "../../../constants/modelConstants";
+import { RoleOptions } from "../../constants/modelConstants";
 
 export interface IMinimalLoginToken {
     id: string;

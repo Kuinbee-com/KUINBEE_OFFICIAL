@@ -22,6 +22,9 @@ export const JWT_SECRET = process.env.JWT_SECRET as string;
 export const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 export const SALT_ROUNDS = process.env.SALT_ROUNDS ? parseInt(process.env.SALT_ROUNDS, 10) : 10;
 export const KUINBEE_SUPER_ADMIN_IDENTITY_CODE = process.env.KUINBEE_SUPER_ADMIN_IDENTITY_CODE as string;
+export const KUINBEE_ADMIN_IDENTITY_CODE = process.env.KUINBEE_ADMIN_IDENTITY_CODE as string;
+export const KUINBEE_USER_IDENTITY_CODE = process.env.KUINBEE_USER_IDENTITY_CODE as string;
+
 export const AWS_REIGON = process.env.AWS_REGION as string;
 export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID as string;
 export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY as string;

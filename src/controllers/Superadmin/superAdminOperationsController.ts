@@ -1,10 +1,10 @@
 import { hashPassword } from '../../utility/common/security/crypto';
 import { Response } from "express";
 import { Prisma, Role } from "@prisma/client";
-import { checkAdminConflicts, checkAuthEmailConflict } from "../../helpers/Superadmin/conflictCheckHelper";
+import { checkAdminConflicts, checkAuthEmailConflict } from "../../helpers/auth/conflictCheckHelper";
 import { createDefaultPassword } from "../../utility/common/security/crypto";
-import { IUnifiedResponse } from "../../utility/common/interfaces/customeResponseInterface";
-import { ICustomeSuperAdminRequest } from "../../utility/common/interfaces/customeRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { ICustomeSuperAdminRequest } from "../../interfaces/custom/customeRequestInterface";
 import { prisma } from '../../client/prisma/getPrismaClient';
 
 const addAdmin = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
@@ -16,7 +16,6 @@ const addAdmin = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedRe
 
         if (authConflict) return void res.status(400).json({ success: false, message: `${authConflict.field} already exists with value: ${authConflict.value}` });
         if (adminConflict) return void res.status(400).json({ success: false, message: `${adminConflict.field} already exists with value: ${adminConflict.value}` });
-
 
         const defaultPassword = createDefaultPassword(firstName);
         const hashedPassword = await hashPassword(defaultPassword);
@@ -38,9 +37,10 @@ const addAdmin = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedRe
         return void res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
 const deleteAdmin = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const deletedAdmin = await prisma.admin.delete({ where: { id: req.inputAdminId }, include: { personalInfo: true, permissions: true, Auth: true } });
+        const deletedAdmin = await prisma.admin.delete({ where: { id: req.paramsId }, include: { personalInfo: true, permissions: true, Auth: true } });
         return void res.status(200).json({ success: true, data: { deletedAdmin } });
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

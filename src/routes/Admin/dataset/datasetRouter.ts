@@ -5,10 +5,7 @@ import { datasetStatRouter } from './datasetStatRouter';
 
 const datasetRouter = express.Router();
 
-
 usePath(datasetRouter, datasetOpRouter, '/operations');
-usePath(datasetRouter, datasetStatRouter, '/stats');
-
-
+// usePath(datasetRouter, datasetStatRouter, '/stats');
 
 export { datasetRouter };

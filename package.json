@@ -23,7 +23,7 @@
     "vercel-build": "npm run build"
   },
   "prisma": {
-    "seed": "ts-node src/client/seed.ts"
+    "seed": "ts-node src/client/prisma/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.859.0",

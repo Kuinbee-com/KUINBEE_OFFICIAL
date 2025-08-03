@@ -1,14 +1,14 @@
-import { ICustomeSuperAdminRequest } from "../common/interfaces/customeRequestInterface";
+import { ICustomAdminRequest, ICustomeSuperAdminRequest } from "../../interfaces/custom/customeRequestInterface";
 import { Response, NextFunction } from "express";
 
-type IKuinbeeCombinedRequest = ICustomeSuperAdminRequest; // add for all types of users here 
+type IKuinbeeCombinedRequest = ICustomeSuperAdminRequest & ICustomAdminRequest; // add for all types of users here 
 const extractIdFromParams = async (req: IKuinbeeCombinedRequest, _: Response, next: NextFunction): Promise<void> => {
-    req.inputAdminId = req.params.id;
+    req.paramsId = req.params.id;
     next();
 }
 
 const extractIdFromBody = async (req: IKuinbeeCombinedRequest, _: Response, next: NextFunction): Promise<void> => {
-    req.inputAdminId = req.body.id;
+    req.bodyId = req.body.id;
     next();
 
 };

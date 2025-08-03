@@ -1,4 +1,5 @@
-import { PersonalInfoInput } from '../utility/common/interfaces/customeInterfaces';
+import { IDatasetBaseInput } from '../interfaces/custom/customeInterfaces';
+import { PersonalInfoInput } from '../interfaces/custom/customeInterfaces';
 
 
 export const adminPersonalInfoValidation = (personalInfo: PersonalInfoInput): string | null => {
@@ -9,3 +10,10 @@ export const adminPersonalInfoValidation = (personalInfo: PersonalInfoInput): st
     }
     return null;
 };
+
+export const datasetInputValidation = (dataset: IDatasetBaseInput): string | null => {
+    const requiredFields: (keyof IDatasetBaseInput)[] = ['title', 'price', 'isPaid', 'license', 'superTypes', 'aboutDataset', 'source'];
+    for (const field of requiredFields) { if (dataset[field] === undefined || dataset[field] === null || dataset[field] === "") return field; }
+    return null;
+
+}

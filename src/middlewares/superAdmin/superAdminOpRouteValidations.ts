@@ -1,9 +1,9 @@
-import { ICustomeSuperAdminRequest } from "../../utility/common/interfaces/customeRequestInterface";
-import { IUnifiedResponse } from "../../utility/common/interfaces/customeResponseInterface";
+import { ICustomeSuperAdminRequest } from "../../interfaces/custom/customeRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
 import { NextFunction, Response } from "express";
 import { emailInputValidation } from "../../validations/inputValidation";
 import { adminPersonalInfoValidation } from "../../validations/personalInfoValidation";
-import { ICustomAddAdmin } from "../../utility/common/interfaces/customeInterfaces";
+import { ICustomAddAdmin } from "../../interfaces/custom/customeInterfaces";
 
 export const handleAddAdminValidation = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedResponse>, next: NextFunction): Promise<void> => {
     try {

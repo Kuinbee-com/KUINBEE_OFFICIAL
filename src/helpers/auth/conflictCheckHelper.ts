@@ -1,4 +1,5 @@
-import { prisma } from "../../client/getPrismaClient";
+import { prisma } from "../../client/prisma/getPrismaClient";
+
 
 type AdminUniqueFields = { personalEmailId: string; officialEmailId: string; phNo: number; };
 type ConflictResult = { field: keyof AdminUniqueFields; value: string | number } | null;
