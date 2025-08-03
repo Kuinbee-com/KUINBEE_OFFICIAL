@@ -1,9 +1,10 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../../client/getPrismaClient";
+
 import { Response } from "express";
 import { createProjectionSelect } from "../../utility/projectionTypes";
 import { ICustomeSuperAdminRequest } from "../../utility/common/interfaces/customeRequestInterface";
 import { IUnifiedResponse } from "../../utility/common/interfaces/customeResponseInterface";
+import { prisma } from "../../client/prisma/getPrismaClient";
 
 const getAllAdmins = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     const selectFields = createProjectionSelect<Prisma.AdminGetPayload<{ include: { personalInfo: true; permissions: true, createdBy: true } }>>()(

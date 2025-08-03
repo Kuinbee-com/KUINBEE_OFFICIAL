@@ -2,10 +2,11 @@ import { Response } from "express";
 import { IUnifiedResponse } from "../../utility/common/interfaces/customeResponseInterface";
 import { ICustomLogInRequest } from "../../utility/common/interfaces/customeRequestInterface";
 import { verifyPassword } from "../../utility/common/security/crypto";
-import { prisma } from "../../client/getPrismaClient";
+
 import { generateAuthToken } from "../../utility/common/security/jwtUtils";
 import { IMinimalLoginToken } from "../../utility/common/interfaces/tokenInterface";
 import { KUINBEE_SUPER_ADMIN_IDENTITY_CODE } from "../../env";
+import { prisma } from "../../client/prisma/getPrismaClient";
 
 const loginPassword = async (req: ICustomLogInRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {

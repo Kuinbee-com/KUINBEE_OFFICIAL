@@ -1,11 +1,11 @@
 import { hashPassword } from '../../utility/common/security/crypto';
 import { Response } from "express";
 import { Prisma, Role } from "@prisma/client";
-import { prisma } from "../../client/getPrismaClient";
 import { checkAdminConflicts, checkAuthEmailConflict } from "../../helpers/Superadmin/conflictCheckHelper";
 import { createDefaultPassword } from "../../utility/common/security/crypto";
 import { IUnifiedResponse } from "../../utility/common/interfaces/customeResponseInterface";
 import { ICustomeSuperAdminRequest } from "../../utility/common/interfaces/customeRequestInterface";
+import { prisma } from '../../client/prisma/getPrismaClient';
 
 const addAdmin = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     const { personalEmailId, officialEmailId, phNo, alternativePhNo, title, firstName, middleName, lastName, personalInfo, permissions } = req.body;
