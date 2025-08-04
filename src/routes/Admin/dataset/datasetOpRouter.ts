@@ -19,7 +19,7 @@ datasetOpRouter.post('/createSource', createSource);
 
 // ************************** PUT *************************** //
 datasetOpRouter.put('/editCategory/:id', extractIdFromParams, editCategory)
-datasetOpRouter.put('/editSource', extractIdFromParams, editSource);
+datasetOpRouter.put('/editSource/:id', extractIdFromParams, editSource);
 
 // ************************** DELETE *************************** //
 datasetOpRouter.delete('/deleteCategory/:id', extractIdFromParams, deleteCategory);

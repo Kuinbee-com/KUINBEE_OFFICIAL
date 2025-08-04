@@ -25,7 +25,7 @@ export const KUINBEE_SUPER_ADMIN_IDENTITY_CODE = process.env.KUINBEE_SUPER_ADMIN
 export const KUINBEE_ADMIN_IDENTITY_CODE = process.env.KUINBEE_ADMIN_IDENTITY_CODE as string;
 export const KUINBEE_USER_IDENTITY_CODE = process.env.KUINBEE_USER_IDENTITY_CODE as string;
 
-export const AWS_REIGON = process.env.AWS_REGION as string;
-export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID as string;
-export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY as string;
+export const AWS_REIGON = process.env.AWS_S3_REGION as string;
+export const AWS_ACCESS_KEY_ID = process.env.AWS_S3_ACCESS_KEY_ID as string;
+export const AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESS_KEY as string;
 export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME as string;

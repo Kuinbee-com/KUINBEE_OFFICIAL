@@ -12,7 +12,7 @@ export const adminPersonalInfoValidation = (personalInfo: PersonalInfoInput): st
 };
 
 export const datasetInputValidation = (dataset: IDatasetBaseInput): string | null => {
-    const requiredFields: (keyof IDatasetBaseInput)[] = ['title', 'price', 'isPaid', 'license', 'superTypes', 'aboutDataset', 'source'];
+    const requiredFields: (keyof IDatasetBaseInput)[] = ['title', 'price', 'isPaid', 'license', 'superTypes', 'aboutDataset', 'sourceId', 'primaryCategoryId', 'security', 'location', 'categories'];
     for (const field of requiredFields) { if (dataset[field] === undefined || dataset[field] === null || dataset[field] === "") return field; }
     return null;
 

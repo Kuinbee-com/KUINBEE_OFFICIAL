@@ -101,7 +101,7 @@ const addDataset = async (req: ICustomAdminRequest, res: Response<IUnifiedRespon
                             city: dataset.location.city as string, state: dataset.location.state as string
                         }
                     } : undefined,
-                    categories: dataset.categories ? { create: dataset.categories.map(categoryId => ({ category: { connect: { id: categoryId } } })) } : undefined
+                    categories: dataset.categories ? { create: dataset.categories.map(cat => ({ category: { connect: { id: cat.id } } })) } : undefined
                 } as Prisma.DatasetCreateInput
             });
         });
@@ -110,6 +110,7 @@ const addDataset = async (req: ICustomAdminRequest, res: Response<IUnifiedRespon
         const uploadUrl = await createPresignedUploadUrl(getDatasetS3Key(createdDataset.id, createdDataset.isPaid, dataset?.aboutDataset?.dataFormat?.fileFormat as FileFormatOptions));
         return void res.status(201).json({ success: true, data: uploadUrl });
     } catch (error) {
+        console.error('Error creating dataset:', error);
         return void res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
