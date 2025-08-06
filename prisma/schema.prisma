@@ -170,6 +170,7 @@ model Dataset {
   isPaid            Boolean
   license           String
   superTypes        String
+  uploaded          Boolean @default(false)
 
   aboutDatasetId String? @unique
   birthInfoId    String? @unique
