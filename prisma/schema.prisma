@@ -169,21 +169,21 @@ model Dataset {
   price             Float
   isPaid            Boolean
   license           String
-  superTypes        String
+  superType         String
   uploaded          Boolean @default(false)
 
-  aboutDatasetId String? @unique
-  birthInfoId    String? @unique
-  locationId     String? @unique
-  securityId     String? @unique
+  aboutDatasetInfoId String? @unique
+  birthInfoId        String? @unique
+  locationInfoId     String? @unique
+  securityInfoId     String? @unique
 
   primaryCategory Category @relation("DatasetPrimaryCategory", fields: [primaryCategoryId], references: [id])
   source          Source   @relation("DatasetSource", fields: [sourceId], references: [id])
 
-  aboutDataset AboutDataset? @relation("DatasetToAboutDataset", fields: [aboutDatasetId], references: [id])
-  birthInfo    BirthInfo?    @relation("DatasetToBirthInfo", fields: [birthInfoId], references: [id])
-  location     Location?     @relation("DatasetToLocation", fields: [locationId], references: [id])
-  security     Security?     @relation("DatasetToSecurity", fields: [securityId], references: [id])
+  aboutDatasetInfo AboutDatasetInfo? @relation("DatasetToAboutDataset", fields: [aboutDatasetInfoId], references: [id], onDelete: Cascade)
+  birthInfo        BirthInfo?        @relation("DatasetToBirthInfo", fields: [birthInfoId], references: [id], onDelete: Cascade)
+  locationInfo     LocationInfo?     @relation("DatasetToLocation", fields: [locationInfoId], references: [id], onDelete: Cascade)
+  securityInfo     SecurityInfo?     @relation("DatasetToSecurity", fields: [securityInfoId], references: [id], onDelete: Cascade)
 
   datasetLookups DatasetLookup[]
   categories     CategoryLookup[]
@@ -193,15 +193,15 @@ model Dataset {
 
 /// ----------- About Dataset -----------
 
-model AboutDataset {
-  id           String @id @default(cuid())
-  overview     String
-  description  String
-  dataQuality  String
-  dataFormatId String
+model AboutDatasetInfo {
+  id               String @id @default(cuid())
+  overview         String
+  description      String
+  dataQuality      String
+  dataFormatInfoId String
 
-  dataFormat DataFormat @relation(fields: [dataFormatId], references: [id])
-  features   Features[]
+  dataFormatInfo DataFormatInfo @relation(fields: [dataFormatInfoId], references: [id], onDelete: Cascade)
+  features       Features[]
 
   // Back-reference to Dataset (Dataset owns the relationship)
   dataset Dataset? @relation("DatasetToAboutDataset")
@@ -210,20 +210,20 @@ model AboutDataset {
 /// ----------- Features -----------
 
 model Features {
-  id           String       @id @default(cuid())
-  aboutId      String
-  content      String
-  AboutDataset AboutDataset @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  id               String           @id @default(cuid())
+  aboutId          String
+  content          String
+  AboutDatasetInfo AboutDatasetInfo @relation(fields: [aboutId], references: [id], onDelete: Cascade)
 }
 
 /// ----------- Data Format -----------
 
-model DataFormat {
-  id           String         @id @default(cuid())
-  rows         Int
-  cols         Int
-  fileFormat   String
-  AboutDataset AboutDataset[]
+model DataFormatInfo {
+  id               String             @id @default(cuid())
+  rows             Int
+  cols             Int
+  fileFormat       String
+  AboutDatasetInfo AboutDatasetInfo[]
 }
 
 /// ----------- Birth Info -----------
@@ -252,9 +252,9 @@ model Source {
   datasets Dataset[] @relation("DatasetSource")
 }
 
-/// ----------- Location -----------
+/// ----------- LocationInfo -----------
 
-model Location {
+model LocationInfo {
   id      String @id @default(cuid())
   region  String
   country String
@@ -265,9 +265,9 @@ model Location {
   dataset Dataset? @relation("DatasetToLocation")
 }
 
-/// ----------- Security -----------
+/// ----------- SecurityInfo -----------
 
-model Security {
+model SecurityInfo {
   id                      String @id @default(cuid())
   currentEncryptionSecret String
   masterSecret            String

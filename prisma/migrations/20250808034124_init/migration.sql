@@ -118,24 +118,25 @@ CREATE TABLE "Dataset" (
     "price" DOUBLE PRECISION NOT NULL,
     "isPaid" BOOLEAN NOT NULL,
     "license" TEXT NOT NULL,
-    "superTypes" TEXT NOT NULL,
-    "aboutDatasetId" TEXT,
+    "superType" TEXT NOT NULL,
+    "uploaded" BOOLEAN NOT NULL DEFAULT false,
+    "aboutDatasetInfoId" TEXT,
     "birthInfoId" TEXT,
-    "locationId" TEXT,
-    "securityId" TEXT,
+    "locationInfoId" TEXT,
+    "securityInfoId" TEXT,
 
     CONSTRAINT "Dataset_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "AboutDataset" (
+CREATE TABLE "AboutDatasetInfo" (
     "id" TEXT NOT NULL,
     "overview" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "dataQuality" TEXT NOT NULL,
-    "dataFormatId" TEXT NOT NULL,
+    "dataFormatInfoId" TEXT NOT NULL,
 
-    CONSTRAINT "AboutDataset_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AboutDatasetInfo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -148,13 +149,13 @@ CREATE TABLE "Features" (
 );
 
 -- CreateTable
-CREATE TABLE "DataFormat" (
+CREATE TABLE "DataFormatInfo" (
     "id" TEXT NOT NULL,
     "rows" INTEGER NOT NULL,
     "cols" INTEGER NOT NULL,
     "fileFormat" TEXT NOT NULL,
 
-    CONSTRAINT "DataFormat_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DataFormatInfo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -178,23 +179,23 @@ CREATE TABLE "Source" (
 );
 
 -- CreateTable
-CREATE TABLE "Location" (
+CREATE TABLE "LocationInfo" (
     "id" TEXT NOT NULL,
     "region" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "city" TEXT NOT NULL,
 
-    CONSTRAINT "Location_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "LocationInfo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Security" (
+CREATE TABLE "SecurityInfo" (
     "id" TEXT NOT NULL,
     "currentEncryptionSecret" TEXT NOT NULL,
     "masterSecret" TEXT NOT NULL,
 
-    CONSTRAINT "Security_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SecurityInfo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -273,16 +274,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "PasswordDetails_userId_key" ON "PasswordDetails"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_aboutDatasetId_key" ON "Dataset"("aboutDatasetId");
+CREATE UNIQUE INDEX "Dataset_aboutDatasetInfoId_key" ON "Dataset"("aboutDatasetInfoId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Dataset_birthInfoId_key" ON "Dataset"("birthInfoId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_locationId_key" ON "Dataset"("locationId");
+CREATE UNIQUE INDEX "Dataset_locationInfoId_key" ON "Dataset"("locationInfoId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_securityId_key" ON "Dataset"("securityId");
+CREATE UNIQUE INDEX "Dataset_securityInfoId_key" ON "Dataset"("securityInfoId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "DatasetLookup_userId_datasetId_key" ON "DatasetLookup"("userId", "datasetId");
@@ -330,22 +331,22 @@ ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_primaryCategoryId_fkey" FOREIGN KE
 ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_sourceId_fkey" FOREIGN KEY ("sourceId") REFERENCES "Source"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_aboutDatasetId_fkey" FOREIGN KEY ("aboutDatasetId") REFERENCES "AboutDataset"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_aboutDatasetInfoId_fkey" FOREIGN KEY ("aboutDatasetInfoId") REFERENCES "AboutDatasetInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_birthInfoId_fkey" FOREIGN KEY ("birthInfoId") REFERENCES "BirthInfo"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_birthInfoId_fkey" FOREIGN KEY ("birthInfoId") REFERENCES "BirthInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_locationInfoId_fkey" FOREIGN KEY ("locationInfoId") REFERENCES "LocationInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_securityId_fkey" FOREIGN KEY ("securityId") REFERENCES "Security"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_securityInfoId_fkey" FOREIGN KEY ("securityInfoId") REFERENCES "SecurityInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AboutDataset" ADD CONSTRAINT "AboutDataset_dataFormatId_fkey" FOREIGN KEY ("dataFormatId") REFERENCES "DataFormat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AboutDatasetInfo" ADD CONSTRAINT "AboutDatasetInfo_dataFormatInfoId_fkey" FOREIGN KEY ("dataFormatInfoId") REFERENCES "DataFormatInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Features" ADD CONSTRAINT "Features_aboutId_fkey" FOREIGN KEY ("aboutId") REFERENCES "AboutDataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Features" ADD CONSTRAINT "Features_aboutId_fkey" FOREIGN KEY ("aboutId") REFERENCES "AboutDatasetInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BirthInfo" ADD CONSTRAINT "BirthInfo_creatorAdminId_fkey" FOREIGN KEY ("creatorAdminId") REFERENCES "Admin"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

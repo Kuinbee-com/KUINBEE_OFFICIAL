@@ -87,19 +87,19 @@ const addDataset = async (req: ICustomAdminRequest, res: Response<IUnifiedRespon
                     price: dataset.price,
                     isPaid: dataset.isPaid,
                     license: dataset.license,
-                    superTypes: dataset.superTypes,
-                    aboutDataset: {
+                    superType: dataset.superTypes,
+                    aboutDatasetInfo: {
                         create: {
-                            overview: dataset.aboutDataset?.overview as string, description: dataset.aboutDataset?.description as string, dataQuality: dataset.aboutDataset?.dataQuality as string,
-                            dataFormat: {
-                                create: { rows: dataset.aboutDataset?.dataFormat?.rows as number, cols: dataset.aboutDataset?.dataFormat?.cols as number, fileFormat: dataset.aboutDataset?.dataFormat?.fileFormat as keyof FileFormatOptions }
+                            overview: dataset.aboutDatasetInfo?.overview as string, description: dataset.aboutDatasetInfo?.description as string, dataQuality: dataset.aboutDatasetInfo?.dataQuality as string,
+                            dataFormatInfo: {
+                                create: { rows: dataset.aboutDatasetInfo?.dataFormatInfo?.rows as number, cols: dataset.aboutDatasetInfo?.dataFormatInfo?.cols as number, fileFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat as keyof FileFormatOptions }
                             },
-                            features: dataset.aboutDataset?.features ? { create: dataset.aboutDataset?.features?.map(feature => ({ content: feature.content as string })) ?? [] } : undefined
+                            features: dataset.aboutDatasetInfo?.features ? { create: dataset.aboutDatasetInfo?.features?.map(feature => ({ content: feature.content as string })) ?? [] } : undefined
                         }
                     },
                     birthInfo: { create: { creatorAdminId: req.id as string, lastUpdaterAdminId: req.id as string } },
-                    security: dataset.security ? { create: { masterSecret: dataset.security?.masterSecret as string, currentEncryptionSecret: dataset.security?.currentEncryptionSecret as string } } : undefined,
-                    location: dataset.location ? {
+                    securityInfo: dataset.security ? { create: { masterSecret: dataset.security?.masterSecret as string, currentEncryptionSecret: dataset.security?.currentEncryptionSecret as string } } : undefined,
+                    locationInfo: dataset.location ? {
                         create: {
                             region: dataset.location.region as string, country: dataset.location.country as string,
                             city: dataset.location.city as string, state: dataset.location.state as string
@@ -111,7 +111,7 @@ const addDataset = async (req: ICustomAdminRequest, res: Response<IUnifiedRespon
         });
 
         if (!createdDataset) return void res.status(500).json({ success: false, message: 'Failed to create dataset' });
-        const uploadUrl = await createPresignedUploadUrl(getDatasetS3Key(createdDataset.id, createdDataset.isPaid, dataset?.aboutDataset?.dataFormat?.fileFormat as FileFormatOptions));
+        const uploadUrl = await createPresignedUploadUrl(getDatasetS3Key(createdDataset.id, createdDataset.isPaid, dataset?.aboutDatasetInfo?.dataFormatInfo?.fileFormat as FileFormatOptions));
         return void res.status(201).json({ success: true, data: uploadUrl });
     } catch (error) {
         console.error('Error creating dataset:', error);

@@ -18,11 +18,11 @@ export interface IDatasetBaseInput {
     isPaid: boolean;
     license: string;
     superTypes: string;
-    aboutDataset?: {
+    aboutDatasetInfo?: {
         overview: string;
         description: string;
         dataQuality: string;
-        dataFormat: {
+        dataFormatInfo: {
             rows: number;
             cols: number;
             fileFormat: FileFormatOptions[number];
