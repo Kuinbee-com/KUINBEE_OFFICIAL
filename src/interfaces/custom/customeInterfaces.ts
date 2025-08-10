@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Gender, Prisma } from "@prisma/client";
 import { IAdmin, IDatasetModel } from "../model/modelnterface";
 import { AdminPermissionOptions, FileFormatOptions } from "../../constants/modelConstants";
 
@@ -54,4 +54,12 @@ export interface ILocationInfo {
 export interface ISecurityInfo {
     currentEncryptionSecret: string;
     masterSecret: string;
+}
+export interface IUserProfile {
+    bio?: string;
+    city?: string;
+    country?: string;
+    gender?: Gender;
+    occupation?: string;
+    institution?: string;
 }

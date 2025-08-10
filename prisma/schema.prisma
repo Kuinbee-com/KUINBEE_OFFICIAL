@@ -149,14 +149,16 @@ model User {
 }
 
 model UserProfileInfo {
-  id          String  @id @default(cuid())
-  userId      String  @unique
-  city        String?
-  country     String?
-  gender      Gender?
-  occupation  String?
-  institution String?
-  user        User?   @relation(fields: [userId], references: [id])
+  id                  String  @id @default(cuid())
+  userId              String  @unique
+  bio                 String?
+  city                String?
+  country             String?
+  gender              Gender?
+  occupation          String?
+  institution         String?
+  userProfilePhotoURL String?
+  user                User?   @relation(fields: [userId], references: [id])
 }
 
 /// ----------- Password Details -----------
