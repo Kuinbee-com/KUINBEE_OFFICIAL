@@ -103,7 +103,7 @@ const getDatasetDownloadURL = async (req: ICustomAdminRequest, res: Response<IUn
     }
 };
 
-const getDatasetUploadURL = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
+const generateDatasetUploadURL = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const { id, fileFormat, isPaid } = req.body;
 
@@ -121,4 +121,4 @@ const getDatasetUploadURL = async (req: ICustomAdminRequest, res: Response<IUnif
     }
 }
 
-export { getAllCategories, getAllSources, getAllDatasets, getDatasetById, getAllNonUploadedDatasetsInfo, getDatasetUploadURL, getAllUploadedDatasets, getDatasetDownloadURL };
+export { getAllCategories, getAllSources, getAllDatasets, getDatasetById, getAllNonUploadedDatasetsInfo, generateDatasetUploadURL, getAllUploadedDatasets, getDatasetDownloadURL };

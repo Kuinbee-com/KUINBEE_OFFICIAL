@@ -135,19 +135,31 @@ model PersonalInfo {
 /// ----------- User -----------
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  phNo      BigInt
+  id    String @id @default(cuid())
+  name  String
+  email String @unique
+  phNo  BigInt
+
   createdAt DateTime @default(now())
 
-  datasets DatasetLookup[]
-  cart     Cart[]
-  Auth     Auth[]
+  datasets        DatasetLookup[]
+  cart            Cart[]
+  Auth            Auth[]
+  UserProfileInfo UserProfileInfo?
+}
+
+model UserProfileInfo {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  city        String?
+  country     String?
+  gender      Gender?
+  occupation  String?
+  institution String?
+  user        User?   @relation(fields: [userId], references: [id])
 }
 
 /// ----------- Password Details -----------
-
 model PasswordDetails {
   id                      String    @id @default(cuid())
   userId                  String    @unique

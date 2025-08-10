@@ -27,7 +27,6 @@ interface ICustomeSuperAdminRequest extends ICustomRequest {
 
 interface ICustomAdminRequest extends ICustomRequest {
     AdminPermissions?: AdminPermissionOptions[];
-
 }
 
 export { ICustomLogInRequest, ICustomRequest, ICustomeSuperAdminRequest, ICustomAdminRequest };
