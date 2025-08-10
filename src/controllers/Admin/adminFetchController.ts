@@ -6,7 +6,7 @@ import { prisma } from "../../client/prisma/getPrismaClient";
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
 import { createProjectionSelect } from "../../utility/projectionTypes";
 import { Prisma } from "@prisma/client";
-import { createPresignedUploadUrl } from '../../client/aws/helpers/presignedUrls';
+import { createPresignedDownloadUrl, createPresignedUploadUrl } from '../../client/aws/helpers/presignedUrls';
 import { getDatasetS3Key } from '../../constants/awsConstants';
 
 
@@ -76,13 +76,28 @@ const getAllNonUploadedDatasetsInfo = async (req: ICustomAdminRequest, res: Resp
 
 const getAllUploadedDatasets = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const datasets = await prisma.dataset.findMany({ where: { uploaded: true }, select: { title: true, isPaid: true, price: true, aboutDatasetInfo: { select: { dataFormatInfo: { select: { fileFormat: true } } } } } });
+        const datasets = await prisma.dataset.findMany({ where: { uploaded: true }, select: { id: true, title: true, isPaid: true, price: true, aboutDatasetInfo: { select: { dataFormatInfo: { select: { fileFormat: true } } } } } });
         res.status(200).json({
             success: true, data: datasets.map(dataset => ({
-                title: dataset.title, isPaid: dataset.isPaid, price: dataset.price,
+                id: dataset.id, title: dataset.title, isPaid: dataset.isPaid, price: dataset.price,
                 fileFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat
             }))
         });
+    } catch (error) {
+        return void handleCatchError(req, res, error);
+    }
+};
+
+const getDatasetDownloadURL = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
+    try {
+        const { id, fileFormat, isPaid } = req.body;
+        const key = getDatasetS3Key(id, isPaid, fileFormat);
+
+        const dataset = await prisma.dataset.findUnique({ where: { id, uploaded: true } });
+        if (!dataset) return void res.status(404).json({ success: false, message: "Dataset not found or it's not uploaded yet" });
+        const downloadURL = await createPresignedDownloadUrl(key);
+
+        res.status(200).json({ success: true, data: { downloadURL } });
     } catch (error) {
         return void handleCatchError(req, res, error);
     }
@@ -95,14 +110,15 @@ const getDatasetUploadURL = async (req: ICustomAdminRequest, res: Response<IUnif
         if (!id) return void res.status(400).json({ success: false, message: "Missing id fields" });
         if (!fileFormat) return void res.status(400).json({ success: false, message: "Missing File Format fields" });
         if (isPaid === undefined && typeof isPaid !== "boolean") return void res.status(400).json({ success: false, message: "Missing isPaid fields" });
-
-        const uploadURL = await createPresignedUploadUrl(getDatasetS3Key(id, fileFormat, isPaid));
+        const key = getDatasetS3Key(id, isPaid, fileFormat);
+        console.log(key);
+        const uploadURL = await createPresignedUploadUrl(key);
         if (!uploadURL) return void res.status(500).json({ success: false, message: "Failed to create upload URL" });
 
-        res.status(200).json({ success: true, data: { uploadURL } });
+        res.status(200).json({ success: true, data: uploadURL });
     } catch (error) {
         return void handleCatchError(req, res, error);
     }
 }
 
-export { getAllCategories, getAllSources, getAllDatasets, getDatasetById, getAllNonUploadedDatasetsInfo, getDatasetUploadURL, getAllUploadedDatasets };
+export { getAllCategories, getAllSources, getAllDatasets, getDatasetById, getAllNonUploadedDatasetsInfo, getDatasetUploadURL, getAllUploadedDatasets, getDatasetDownloadURL };
