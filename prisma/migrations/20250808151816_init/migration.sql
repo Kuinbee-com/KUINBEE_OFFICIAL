@@ -120,10 +120,6 @@ CREATE TABLE "Dataset" (
     "license" TEXT NOT NULL,
     "superType" TEXT NOT NULL,
     "uploaded" BOOLEAN NOT NULL DEFAULT false,
-    "aboutDatasetInfoId" TEXT,
-    "birthInfoId" TEXT,
-    "locationInfoId" TEXT,
-    "securityInfoId" TEXT,
 
     CONSTRAINT "Dataset_pkey" PRIMARY KEY ("id")
 );
@@ -131,21 +127,13 @@ CREATE TABLE "Dataset" (
 -- CreateTable
 CREATE TABLE "AboutDatasetInfo" (
     "id" TEXT NOT NULL,
+    "datasetId" TEXT NOT NULL,
     "overview" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "dataQuality" TEXT NOT NULL,
     "dataFormatInfoId" TEXT NOT NULL,
 
     CONSTRAINT "AboutDatasetInfo_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Features" (
-    "id" TEXT NOT NULL,
-    "aboutId" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-
-    CONSTRAINT "Features_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -159,8 +147,18 @@ CREATE TABLE "DataFormatInfo" (
 );
 
 -- CreateTable
+CREATE TABLE "Features" (
+    "id" TEXT NOT NULL,
+    "aboutId" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+
+    CONSTRAINT "Features_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "BirthInfo" (
     "id" TEXT NOT NULL,
+    "datasetId" TEXT NOT NULL,
     "creatorAdminId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "lastUpdaterAdminId" TEXT NOT NULL,
@@ -170,17 +168,9 @@ CREATE TABLE "BirthInfo" (
 );
 
 -- CreateTable
-CREATE TABLE "Source" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Source_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "LocationInfo" (
     "id" TEXT NOT NULL,
+    "datasetId" TEXT NOT NULL,
     "region" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "state" TEXT NOT NULL,
@@ -192,10 +182,20 @@ CREATE TABLE "LocationInfo" (
 -- CreateTable
 CREATE TABLE "SecurityInfo" (
     "id" TEXT NOT NULL,
+    "datasetId" TEXT NOT NULL,
     "currentEncryptionSecret" TEXT NOT NULL,
     "masterSecret" TEXT NOT NULL,
 
     CONSTRAINT "SecurityInfo_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Source" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Source_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -274,16 +274,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "PasswordDetails_userId_key" ON "PasswordDetails"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_aboutDatasetInfoId_key" ON "Dataset"("aboutDatasetInfoId");
+CREATE UNIQUE INDEX "AboutDatasetInfo_datasetId_key" ON "AboutDatasetInfo"("datasetId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_birthInfoId_key" ON "Dataset"("birthInfoId");
+CREATE UNIQUE INDEX "BirthInfo_datasetId_key" ON "BirthInfo"("datasetId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_locationInfoId_key" ON "Dataset"("locationInfoId");
+CREATE UNIQUE INDEX "LocationInfo_datasetId_key" ON "LocationInfo"("datasetId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Dataset_securityInfoId_key" ON "Dataset"("securityInfoId");
+CREATE UNIQUE INDEX "SecurityInfo_datasetId_key" ON "SecurityInfo"("datasetId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "DatasetLookup_userId_datasetId_key" ON "DatasetLookup"("userId", "datasetId");
@@ -331,16 +331,7 @@ ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_primaryCategoryId_fkey" FOREIGN KE
 ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_sourceId_fkey" FOREIGN KEY ("sourceId") REFERENCES "Source"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_aboutDatasetInfoId_fkey" FOREIGN KEY ("aboutDatasetInfoId") REFERENCES "AboutDatasetInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_birthInfoId_fkey" FOREIGN KEY ("birthInfoId") REFERENCES "BirthInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_locationInfoId_fkey" FOREIGN KEY ("locationInfoId") REFERENCES "LocationInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Dataset" ADD CONSTRAINT "Dataset_securityInfoId_fkey" FOREIGN KEY ("securityInfoId") REFERENCES "SecurityInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "AboutDatasetInfo" ADD CONSTRAINT "AboutDatasetInfo_datasetId_fkey" FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "AboutDatasetInfo" ADD CONSTRAINT "AboutDatasetInfo_dataFormatInfoId_fkey" FOREIGN KEY ("dataFormatInfoId") REFERENCES "DataFormatInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -349,10 +340,16 @@ ALTER TABLE "AboutDatasetInfo" ADD CONSTRAINT "AboutDatasetInfo_dataFormatInfoId
 ALTER TABLE "Features" ADD CONSTRAINT "Features_aboutId_fkey" FOREIGN KEY ("aboutId") REFERENCES "AboutDatasetInfo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "BirthInfo" ADD CONSTRAINT "BirthInfo_datasetId_fkey" FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "BirthInfo" ADD CONSTRAINT "BirthInfo_creatorAdminId_fkey" FOREIGN KEY ("creatorAdminId") REFERENCES "Admin"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BirthInfo" ADD CONSTRAINT "BirthInfo_lastUpdaterAdminId_fkey" FOREIGN KEY ("lastUpdaterAdminId") REFERENCES "Admin"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LocationInfo" ADD CONSTRAINT "LocationInfo_datasetId_fkey" FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SecurityInfo" ADD CONSTRAINT "SecurityInfo_datasetId_fkey" FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DatasetUpdateHistory" ADD CONSTRAINT "DatasetUpdateHistory_datasetId_fkey" FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;

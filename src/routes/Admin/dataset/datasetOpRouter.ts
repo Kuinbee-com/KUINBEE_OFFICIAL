@@ -1,7 +1,7 @@
 import express from "express";
-import { handleAddDatasetValidation, handleCreateCategoryValidation } from "../../../middlewares/admin/adminOpRouteaValidations";
-import { addDataset, createCategory, createSource, deleteCategory, deleteSource, editCategory, editSource } from "../../../controllers/Admin/adminOperationController";
-import { getAllCategories, getAllSources } from "../../../controllers/Admin/adminFetchController";
+import { handleAddDatasetInfoValidation, handleAddMultipleDatasetInfoValidation, handleCreateCategoryValidation } from "../../../middlewares/admin/adminOpRouteaValidations";
+import { addDataset, addMultipleDatasetInfo, createCategory, createSource, deleteCategory, deleteSource, editCategory, editSource } from "../../../controllers/Admin/adminOperationController";
+import { getAllCategories, getAllDatasets, getAllNonUploadedDatasetsInfo, getAllSources, getDatasetById, getDatasetUploadURL } from "../../../controllers/Admin/adminFetchController";
 import { extractIdFromParams } from "../../../utility/auth/requestUtils";
 
 const datasetOpRouter = express.Router();
@@ -9,10 +9,15 @@ const datasetOpRouter = express.Router();
 // ************************** GET *************************** //
 datasetOpRouter.get('/getAllCategories', getAllCategories);
 datasetOpRouter.get('/getAllSources', getAllSources);
+datasetOpRouter.get('/getAllDatasets', getAllDatasets);
+datasetOpRouter.get('/getDatasetById/:id', extractIdFromParams, getDatasetById);
+datasetOpRouter.get('/getAllNonUploadedDatasetsInfo', getAllNonUploadedDatasetsInfo);
+datasetOpRouter.get('/getDatasetUploadURL', getDatasetUploadURL);
 
 
 // *************************** POST ************************** //
-datasetOpRouter.post('/addDataset', handleAddDatasetValidation, addDataset);
+datasetOpRouter.post('/addDataset', handleAddDatasetInfoValidation, addDataset);
+datasetOpRouter.post('/addMultipleDatasetInfo', handleAddMultipleDatasetInfoValidation, addMultipleDatasetInfo);
 datasetOpRouter.post('/createCategory', handleCreateCategoryValidation, createCategory);
 datasetOpRouter.post('/createSource', createSource);
 

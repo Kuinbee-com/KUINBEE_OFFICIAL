@@ -91,9 +91,7 @@ model Admin {
   Auth               Auth[]                 @relation("AdminToAuth")
   updatedDatasets    DatasetUpdateHistory[] @relation("UpdatedDatasets")
   updatedPermissions AdminPermissions[]     @relation("UpdatedByAdmin")
-
-  birthInfosCreated BirthInfo[] @relation("AdminToBirthInfo")
-  birthInfosUpdated BirthInfo[] @relation("AdminToBirthInfoUpdater")
+  birthInfo          BirthInfo[]
 }
 
 /// ----------- Admin Permissions -----------
@@ -170,44 +168,42 @@ model Dataset {
   isPaid            Boolean
   license           String
   superType         String
+  datasetUniqueId   String  @unique
   uploaded          Boolean @default(false)
-
-  aboutDatasetInfoId String? @unique
-  birthInfoId        String? @unique
-  locationInfoId     String? @unique
-  securityInfoId     String? @unique
 
   primaryCategory Category @relation("DatasetPrimaryCategory", fields: [primaryCategoryId], references: [id])
   source          Source   @relation("DatasetSource", fields: [sourceId], references: [id])
 
-  aboutDatasetInfo AboutDatasetInfo? @relation("DatasetToAboutDataset", fields: [aboutDatasetInfoId], references: [id], onDelete: Cascade)
-  birthInfo        BirthInfo?        @relation("DatasetToBirthInfo", fields: [birthInfoId], references: [id], onDelete: Cascade)
-  locationInfo     LocationInfo?     @relation("DatasetToLocation", fields: [locationInfoId], references: [id], onDelete: Cascade)
-  securityInfo     SecurityInfo?     @relation("DatasetToSecurity", fields: [securityInfoId], references: [id], onDelete: Cascade)
-
-  datasetLookups DatasetLookup[]
-  categories     CategoryLookup[]
-  updateHistory  DatasetUpdateHistory[]
-  carts          Cart[]
+  aboutDatasetInfo     AboutDatasetInfo?
+  birthInfo            BirthInfo?
+  locationInfo         LocationInfo?
+  securityInfo         SecurityInfo?
+  DatasetUpdateHistory DatasetUpdateHistory[]
+  DatasetLookup        DatasetLookup[]
+  CategoryLookup       CategoryLookup[]
+  Cart                 Cart[]
 }
-
-/// ----------- About Dataset -----------
 
 model AboutDatasetInfo {
-  id               String @id @default(cuid())
-  overview         String
-  description      String
-  dataQuality      String
-  dataFormatInfoId String
+  id          String @id @default(cuid())
+  datasetId   String @unique
+  overview    String
+  description String
+  dataQuality String
 
-  dataFormatInfo DataFormatInfo @relation(fields: [dataFormatInfoId], references: [id], onDelete: Cascade)
+  dataset        Dataset         @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  dataFormatInfo DataFormatInfo?
   features       Features[]
-
-  // Back-reference to Dataset (Dataset owns the relationship)
-  dataset Dataset? @relation("DatasetToAboutDataset")
 }
 
-/// ----------- Features -----------
+model DataFormatInfo {
+  id               String           @id @default(cuid())
+  aboutDatasetId   String           @unique
+  rows             Int
+  cols             Int
+  fileFormat       String
+  aboutDatasetInfo AboutDatasetInfo @relation(fields: [aboutDatasetId], references: [id], onDelete: Cascade)
+}
 
 model Features {
   id               String           @id @default(cuid())
@@ -216,33 +212,39 @@ model Features {
   AboutDatasetInfo AboutDatasetInfo @relation(fields: [aboutId], references: [id], onDelete: Cascade)
 }
 
-/// ----------- Data Format -----------
-
-model DataFormatInfo {
-  id               String             @id @default(cuid())
-  rows             Int
-  cols             Int
-  fileFormat       String
-  AboutDatasetInfo AboutDatasetInfo[]
-}
-
-/// ----------- Birth Info -----------
-
 model BirthInfo {
   id                 String   @id @default(cuid())
+  datasetId          String   @unique
   creatorAdminId     String
   createdAt          DateTime @default(now())
   lastUpdaterAdminId String
   lastUpdatedAt      DateTime @default(now())
 
-  creatorAdmin Admin @relation("AdminToBirthInfo", fields: [creatorAdminId], references: [id])
-  lastUpdater  Admin @relation("AdminToBirthInfoUpdater", fields: [lastUpdaterAdminId], references: [id])
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  Admin   Admin?  @relation(fields: [creatorAdminId], references: [id])
+}
 
-  dataset Dataset? @relation("DatasetToBirthInfo")
+model LocationInfo {
+  id        String @id @default(cuid())
+  datasetId String @unique
+  region    String
+  country   String
+  state     String
+  city      String
+
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+}
+
+model SecurityInfo {
+  id                      String @id @default(cuid())
+  datasetId               String @unique
+  currentEncryptionSecret String
+  masterSecret            String
+
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
 }
 
 /// ----------- Source -----------
-
 model Source {
   id        String   @id @default(cuid())
   name      String
@@ -252,32 +254,7 @@ model Source {
   datasets Dataset[] @relation("DatasetSource")
 }
 
-/// ----------- LocationInfo -----------
-
-model LocationInfo {
-  id      String @id @default(cuid())
-  region  String
-  country String
-  state   String
-  city    String
-
-  // Back-reference to Dataset (Dataset owns the relationship)
-  dataset Dataset? @relation("DatasetToLocation")
-}
-
-/// ----------- SecurityInfo -----------
-
-model SecurityInfo {
-  id                      String @id @default(cuid())
-  currentEncryptionSecret String
-  masterSecret            String
-
-  // Back-reference to Dataset (Dataset owns the relationship)
-  dataset Dataset? @relation("DatasetToSecurity")
-}
-
 /// ----------- Dataset Update History -----------
-
 model DatasetUpdateHistory {
   id        String   @id @default(cuid())
   datasetId String

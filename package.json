@@ -20,7 +20,8 @@
     "build": "tsc",
     "postinstall": "prisma generate --no-engine",
     "prepare": "prisma generate --no-engine",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build",
+    "clear": "ts-node src/utility/scripts/dropTables.ts"
   },
   "prisma": {
     "seed": "ts-node src/client/prisma/seed.ts"

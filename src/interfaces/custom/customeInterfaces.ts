@@ -18,34 +18,40 @@ export interface IDatasetBaseInput {
     isPaid: boolean;
     license: string;
     superTypes: string;
-    aboutDatasetInfo?: {
-        overview: string;
-        description: string;
-        dataQuality: string;
-        dataFormatInfo: {
-            rows: number;
-            cols: number;
-            fileFormat: FileFormatOptions[number];
-        };
-        features?: Array<{ content: string; }>;
-    };
-
-    birthInfo?: {
-        creatorAdminId: string;
-        lastUpdaterAdminId: string;
-    };
-
-    location?: {
-        region: string;
-        country: string;
-        state: string;
-        city: string;
-    };
-
-    security?: {
-        currentEncryptionSecret: string;
-        masterSecret: string;
-    };
-
+    datasetUniqueId: string;
+    aboutDatasetInfo?: IAboutDatasetInfo;
+    birthInfo?: IBirthInfo;
+    locationInfo?: ILocationInfo;
+    securityInfo?: ISecurityInfo;
     categories?: Array<{ id: string; }>
+}
+
+export interface IAboutDatasetInfo {
+    overview: string;
+    description: string;
+    dataQuality: string;
+    dataFormatInfo: {
+        rows: number;
+        cols: number;
+        fileFormat: FileFormatOptions[number];
+    };
+    features?: Array<{ content: string; }>;
+}
+
+
+export interface IBirthInfo {
+    creatorAdminId: string;
+    lastUpdaterAdminId: string;
+}
+
+export interface ILocationInfo {
+    region: string;
+    country: string;
+    state: string;
+    city: string;
+}
+
+export interface ISecurityInfo {
+    currentEncryptionSecret: string;
+    masterSecret: string;
 }
