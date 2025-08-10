@@ -74,6 +74,20 @@ const getAllNonUploadedDatasetsInfo = async (req: ICustomAdminRequest, res: Resp
     }
 };
 
+const getAllUploadedDatasets = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
+    try {
+        const datasets = await prisma.dataset.findMany({ where: { uploaded: true }, select: { title: true, isPaid: true, price: true, aboutDatasetInfo: { select: { dataFormatInfo: { select: { fileFormat: true } } } } } });
+        res.status(200).json({
+            success: true, data: datasets.map(dataset => ({
+                title: dataset.title, isPaid: dataset.isPaid, price: dataset.price,
+                fileFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat
+            }))
+        });
+    } catch (error) {
+        return void handleCatchError(req, res, error);
+    }
+};
+
 const getDatasetUploadURL = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const { id, fileFormat, isPaid } = req.body;
@@ -91,4 +105,4 @@ const getDatasetUploadURL = async (req: ICustomAdminRequest, res: Response<IUnif
     }
 }
 
-export { getAllCategories, getAllSources, getAllDatasets, getDatasetById, getAllNonUploadedDatasetsInfo, getDatasetUploadURL };
+export { getAllCategories, getAllSources, getAllDatasets, getDatasetById, getAllNonUploadedDatasetsInfo, getDatasetUploadURL, getAllUploadedDatasets };
