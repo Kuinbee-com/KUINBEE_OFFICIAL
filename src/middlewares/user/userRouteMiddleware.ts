@@ -31,7 +31,6 @@ const handleProfileInputValidation = (req: Request, res: Response<IUnifiedRespon
     if (gender && !Object.values(Gender).includes(gender)) return res.status(400).json({ success: false, message: "Invalid gender" });
     if (occupation && typeof occupation !== 'string') return res.status(400).json({ success: false, message: "Invalid occupation" });
     if (institution && typeof institution !== 'string') return res.status(400).json({ success: false, message: "Invalid institution" });
-
     next();
 };
 

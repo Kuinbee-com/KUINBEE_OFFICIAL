@@ -4,6 +4,7 @@ import { handleUserRegistrationValidation } from '../../middlewares/user/userRou
 import { userRegistration } from '../../controllers/User/userRegistration';
 import { requireAuth } from '../../middlewares/auth/common/requireAuth';
 import userProfileRouter from './profile/userProfileRouter';
+import userDatasetRouter from './datasets/userDatasetRouter';
 const userRouter = express.Router();
 
 userRouter.post('/userRegistration', handleUserRegistrationValidation, userRegistration);
@@ -11,5 +12,6 @@ userRouter.post('/userRegistration', handleUserRegistrationValidation, userRegis
 userRouter.use(requireAuth);
 
 usePath(userRouter, userProfileRouter, '/profile')
+usePath(userRouter, userDatasetRouter, '/datasets');
 
 export default userRouter;

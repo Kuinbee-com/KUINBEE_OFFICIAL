@@ -5,6 +5,7 @@ import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterfa
 import { ICustomRequest } from "../../interfaces/custom/customeRequestInterface";
 import { IUserProfile } from "../../interfaces/custom/customeInterfaces";
 import { handleCatchError } from '../../utility/common/handleCatchErrorHelper';
+import { generateDatasetDownloadURLHelper } from '../../helpers/datasets/datasetOperationHelper';
 
 const upsertUserProfileInfo = async (req: ICustomRequest, res: Response<IUnifiedResponse>) => {
     try {
@@ -28,4 +29,15 @@ const upsertUserProfileInfo = async (req: ICustomRequest, res: Response<IUnified
 };
 
 
-export { upsertUserProfileInfo };
+const generateDatasetDownloadURL = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
+    try {
+        const { datasetId, fileFormat, isPaid, userId, isAgreedToLicense } = req.body;
+        if (!isAgreedToLicense) return void res.status(403).json({ success: false, message: "You must agree to the license terms to download this dataset." });
+        const [downloadURL] = await Promise.all([generateDatasetDownloadURLHelper(datasetId, fileFormat, isPaid), prisma.datasetLookup.create({ data: { user: { connect: { id: userId } }, dataset: { connect: { id: datasetId } } } })]);
+        return void res.status(200).json({ success: true, data: { downloadURL } });
+    } catch (error) {
+        return void handleCatchError(req, res, error);
+    }
+};
+
+export { upsertUserProfileInfo, generateDatasetDownloadURL };

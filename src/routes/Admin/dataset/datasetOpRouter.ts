@@ -1,7 +1,7 @@
 import express from "express";
 import { handleAddDatasetInfoValidation, handleAddMultipleDatasetInfoValidation, handleCreateCategoryValidation } from "../../../middlewares/admin/adminOpRouteaValidations";
 import { addDataset, addMultipleDatasetInfo, createCategory, createSource, deleteCategory, deleteSource, editCategory, editSource } from "../../../controllers/Admin/adminOperationController";
-import { getAllCategories, getAllDatasets, getAllNonUploadedDatasetsInfo, getAllSources, getAllUploadedDatasets, getDatasetById, getDatasetDownloadURL, generateDatasetUploadURL } from "../../../controllers/Admin/adminFetchController";
+import { getAllCategories, getAllDatasets, getAllNonUploadedDatasetsInfo, getAllSources, getAllUploadedDatasets, getDatasetById, generateDatasetDownloadURL, generateDatasetUploadURL } from "../../../controllers/Admin/adminFetchController";
 import { extractIdFromParams } from "../../../utility/auth/requestUtils";
 
 const datasetOpRouter = express.Router();
@@ -13,7 +13,7 @@ datasetOpRouter.get('/getAllDatasets', getAllDatasets);
 datasetOpRouter.get('/getDatasetById/:id', extractIdFromParams, getDatasetById);
 datasetOpRouter.get('/getAllNonUploadedDatasetsInfo', getAllNonUploadedDatasetsInfo);
 datasetOpRouter.get('/getAllUploadedDatasets', getAllUploadedDatasets);
-datasetOpRouter.get('/getDatasetDownloadURL', getDatasetDownloadURL);
+
 
 // *************************** POST ************************** //
 datasetOpRouter.post('/addDataset', handleAddDatasetInfoValidation, addDataset);
@@ -21,6 +21,7 @@ datasetOpRouter.post('/addMultipleDatasetInfo', handleAddMultipleDatasetInfoVali
 datasetOpRouter.post('/createCategory', handleCreateCategoryValidation, createCategory);
 datasetOpRouter.post('/createSource', createSource);
 datasetOpRouter.post('/generateDatasetUploadURL', generateDatasetUploadURL);
+datasetOpRouter.post('/generateDatasetDownloadURL', generateDatasetDownloadURL);
 
 // ************************** PUT *************************** //
 datasetOpRouter.put('/editCategory/:id', extractIdFromParams, editCategory)
