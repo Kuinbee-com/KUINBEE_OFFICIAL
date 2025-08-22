@@ -50,7 +50,7 @@ const getAllDatasets = async (req: ICustomAdminRequest, res: Response<IUnifiedRe
 
 const getDatasetById = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const dataset = getDatasetByIdHelper(req.params.id);
+        const dataset = await getDatasetByIdHelper(req.params.id);
         if (!dataset) return void res.status(404).json({ success: false, message: "Dataset not found" });
         res.status(200).json({ success: true, data: dataset });
     } catch (error) {
