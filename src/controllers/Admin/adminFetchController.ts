@@ -6,7 +6,7 @@ import { prisma } from "../../client/prisma/getPrismaClient";
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
 import { createProjectionSelect } from "../../utility/projectionTypes";
 import { Prisma } from "@prisma/client";
-import { createPresignedDownloadUrl, createPresignedUploadUrl } from '../../client/aws/helpers/presignedUrls';
+import { createPresignedUploadUrl } from '../../client/aws/helpers/presignedUrls';
 import { getDatasetS3Key } from '../../constants/awsConstants';
 import { getAllUploadedDatasetHelper, getDatasetByIdHelper } from '../../helpers/datasets/datasetFetchHelper';
 import { generateDatasetDownloadURLHelper } from '../../helpers/datasets/datasetOperationHelper';

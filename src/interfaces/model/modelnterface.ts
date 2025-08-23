@@ -5,19 +5,19 @@ import { Prisma } from "@prisma/client";
 
 // **************************** Model types ****************************
 export type FullAuthModel = Prisma.AuthGetPayload<{ include: Prisma.AuthInclude }>;
-export type AuthModel = Prisma.AuthGetPayload<{}>;
-export type PasswordModel = Prisma.PasswordDetailsGetPayload<{}>;
-export type FullAdminPermissions = Prisma.AdminPermissionsGetPayload<{}>;
-export type FullAddAdminInputBody = Prisma.AdminGetPayload<{}>
-export type FullPersonalInfo = Prisma.PersonalInfoGetPayload<{}>
+export type AuthModel = Prisma.AuthGetPayload<object>;
+export type PasswordModel = Prisma.PasswordDetailsGetPayload<object>;
+export type FullAdminPermissions = Prisma.AdminPermissionsGetPayload<object>;
+export type FullAddAdminInputBody = Prisma.AdminGetPayload<object>
+export type FullPersonalInfo = Prisma.PersonalInfoGetPayload<object>
 export type FullDatasetModel = Prisma.DatasetGetPayload<{ include: Prisma.DatasetInclude, }>;
 
 
 
 // **************************** Model Interdfaces ****************************
-export interface IAuthModel extends Omit<FullAuthModel, 'password'> { };
-export interface IPasswordModel extends PasswordModel { };
-export interface IFullAdminPermissions extends FullAdminPermissions { };
-export interface IPersonalInfo extends FullPersonalInfo { };
-export interface IAdmin extends FullAddAdminInputBody { };
-export interface IDatasetModel extends FullDatasetModel { };
+export type IAuthModel = Omit<FullAuthModel, 'password'>;
+export type IPasswordModel = PasswordModel;
+export type IFullAdminPermissions = FullAdminPermissions;
+export type IPersonalInfo = FullPersonalInfo;
+export type IAdmin = FullAddAdminInputBody;
+export type IDatasetModel = FullDatasetModel;

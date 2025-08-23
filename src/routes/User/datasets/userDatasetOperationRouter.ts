@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllUploadedDatasets, getDatasetById, getDownloadedDatasets } from "../../../controllers/User/userFetchControllers";
+import { getAllCategories, getAllSources, getAllUploadedDatasets, getDatasetById, getDownloadedDatasets } from "../../../controllers/User/userFetchControllers";
 import { generateDatasetDownloadURL } from "../../../controllers/User/userOperationControllers";
 const userDatasetOperationRouter = express.Router();
 
@@ -8,6 +8,8 @@ const userDatasetOperationRouter = express.Router();
 userDatasetOperationRouter.get('/getDownloadedDatasets', getDownloadedDatasets);
 userDatasetOperationRouter.get('/getDatasetById/:id', getDatasetById);
 userDatasetOperationRouter.get('/getAllUploadedDatasets', getAllUploadedDatasets);
+userDatasetOperationRouter.get('/getAllCategories', getAllCategories);
+userDatasetOperationRouter.get('/getAllSources', getAllSources);
 
 // ***************************** POST ********************************
 userDatasetOperationRouter.post('/generateDatasetDownloadURL', generateDatasetDownloadURL);
