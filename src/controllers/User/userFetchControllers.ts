@@ -4,6 +4,7 @@ import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterfa
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
 import { prisma } from "../../client/prisma/getPrismaClient";
 import { getAllUploadedDatasetHelper, getDatasetByIdHelper } from "../../helpers/datasets/datasetFetchHelper";
+import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customeInterfaces";
 
 const getUserProfileInfo = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
@@ -46,7 +47,7 @@ const getDatasetById = async (req: ICustomRequest, res: Response<IUnifiedRespons
 
 const getAllUploadedDatasets = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const datasets = await getAllUploadedDatasetHelper();
+        const datasets = await getAllUploadedDatasetHelper(req?.query as unknown as IGetUploadedDatasetQuery);
         return void res.status(200).json({ success: true, data: datasets });
     } catch (error) {
         return void handleCatchError(req, res, error);

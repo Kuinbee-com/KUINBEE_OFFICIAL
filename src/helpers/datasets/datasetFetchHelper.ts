@@ -1,12 +1,29 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../client/prisma/getPrismaClient";
+import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customeInterfaces";
 
-const getAllUploadedDatasetHelper = async () => {
+const getAllUploadedDatasetHelper = async (query?: IGetUploadedDatasetQuery) => {
     try {
-        // const selectedFields = createProjectionSelect<Prisma.DatasetGetPayload<{ select: { _count: { select: { DatasetLookup: true } } }, include: { aboutDatasetInfo: { include: { dataFormatInfo: true, features: true } }, primaryCategory: true, source: true, locationInfo: true, birthInfo: true } }>>()([
-        //     'id', 'title', 'isPaid', 'price', 'aboutDatasetInfo.overview', 'aboutDatasetInfo.dataFormatInfo.fileFormat', 'primaryCategory.name', 'source.name', 'locationInfo', 'birthInfo.lastUpdatedAt'
-        // ])
+        const { limit, offset, filter, search } = query || {};
+        const where: Prisma.DatasetWhereInput = {
+            uploaded: true,
+            isPaid: filter?.isPaid !== undefined ? filter.isPaid : undefined,
+            primaryCategoryId: filter?.category !== undefined ? filter.category : undefined,
+            sourceId: filter?.source !== undefined ? filter.source : undefined,
+            title: search ? { contains: search, mode: "insensitive" } : undefined
+        };
+        if (filter?.location) {
+            const loc = filter.location;
+            where.OR = [
+                { locationInfo: { city: { equals: loc, mode: 'insensitive' } } },
+                { locationInfo: { state: { equals: loc, mode: 'insensitive' } } },
+                { locationInfo: { country: { equals: loc, mode: 'insensitive' } } },
+                { locationInfo: { region: { equals: loc, mode: 'insensitive' } } },
+            ];
+        }
+        console.info(where);
         const datasets = await prisma.dataset.findMany({
-            where: { uploaded: true },
+            where, orderBy: { DatasetLookup: { _count: 'desc' } }, skip: offset, take: limit,
             select: {
                 id: true, title: true, isPaid: true, price: true, _count: { select: { DatasetLookup: true } }, primaryCategory: { select: { name: true } }, source: { select: { name: true } },
                 aboutDatasetInfo: { select: { overview: true, dataFormatInfo: { select: { fileFormat: true } } } }, locationInfo: true, birthInfo: { select: { lastUpdatedAt: true } }

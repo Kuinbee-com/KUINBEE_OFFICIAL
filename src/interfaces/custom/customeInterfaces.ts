@@ -1,5 +1,5 @@
 import { Gender, Prisma } from "@prisma/client";
-import { IAdmin, IDatasetModel } from "../model/modelnterface";
+import { IAdmin } from "../model/modelnterface";
 import { AdminPermissionOptions, FileFormatOptions } from "../../constants/modelConstants";
 
 export type AdminBaseInput = Omit<IAdmin, "createdBy" | "personalInfo" | "permissions" | "Auth" | "createdAt" | "personalInfoId" | "adminPermissionsId">
@@ -62,4 +62,17 @@ export interface IUserProfile {
     gender?: Gender;
     occupation?: string;
     institution?: string;
+}
+
+export interface IGetUploadedDatasetQuery {
+    limit: number;
+    offset?: number;
+    filter?: IGetUploadedDatasetFilter;
+    search?: string;
+}
+interface IGetUploadedDatasetFilter {
+    isPaid?: boolean;
+    category?: string;
+    source?: string;
+    location?: string;
 }
