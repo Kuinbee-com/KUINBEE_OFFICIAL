@@ -15,7 +15,6 @@ const loginPassword = async (req: ICustomLogInRequest, res: Response<IUnifiedRes
 
         if (!user) return void res.status(404).json({ success: false, error: 'Invalid email or user not found' });
         if (!(await verifyPassword(password, user.password))) return void res.status(401).json({ success: false, error: 'Incorrect password' });
-
         const identityCode = (user.role === 'SUPERADMIN') ? KUINBEE_SUPER_ADMIN_IDENTITY_CODE : (user.role === 'ADMIN') ? KUINBEE_ADMIN_IDENTITY_CODE : KUINBEE_USER_IDENTITY_CODE
         const jwtPayload = {
             id: user.id, email: user.emailId, role: user.role,
@@ -28,7 +27,7 @@ const loginPassword = async (req: ICustomLogInRequest, res: Response<IUnifiedRes
         const token = generateAuthToken(jwtPayload);
         return void res.status(200).json({ success: true, data: { token, identityCode } });
     } catch (error) {
-        return void res.status(500).json({ success: false, error: 'Internal server error' });
+        return void res.status(500).json({ success: false, error: `Internal server error: ${error}` });
     }
 };
 

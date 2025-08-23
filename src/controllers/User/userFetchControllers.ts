@@ -16,7 +16,6 @@ const getUserProfileInfo = async (req: ICustomRequest, res: Response<IUnifiedRes
         return void handleCatchError(req, res, error);
     }
 };
-
 const getDownloadedDatasets = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const userId = req.id;
@@ -32,7 +31,6 @@ const getDownloadedDatasets = async (req: ICustomRequest, res: Response<IUnified
         return void handleCatchError(req, res, error);
     }
 };
-
 const getDatasetById = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const dataset = await getDatasetByIdHelper(req.params.id);
@@ -44,7 +42,6 @@ const getDatasetById = async (req: ICustomRequest, res: Response<IUnifiedRespons
         return void handleCatchError(req, res, error);
     }
 };
-
 const getAllUploadedDatasets = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const datasets = await getAllUploadedDatasetHelper(req?.query as unknown as IGetUploadedDatasetQuery);
@@ -53,7 +50,6 @@ const getAllUploadedDatasets = async (req: ICustomRequest, res: Response<IUnifie
         return void handleCatchError(req, res, error);
     }
 };
-
 const getAllCategories = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const categories = await prisma.category.findMany();
@@ -70,5 +66,4 @@ const getAllSources = async (req: ICustomRequest, res: Response<IUnifiedResponse
         return void handleCatchError(req, res, error);
     }
 };
-
 export { getUserProfileInfo, getDownloadedDatasets, getDatasetById, getAllUploadedDatasets, getAllCategories, getAllSources };
