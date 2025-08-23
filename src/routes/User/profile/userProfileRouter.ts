@@ -5,13 +5,9 @@ import { getUserProfileInfo } from '../../../controllers/User/userFetchControlle
 const userProfileRouter = express.Router();
 
 // ****************************** OPERATIONAL ROUTES ******************************
-
-
 userProfileRouter.post('/upsertUserProfileInfo', handleProfileInputValidation, upsertUserProfileInfo);
 
-
 // ***************************** FETCH ROUTES *****************************
-
 userProfileRouter.get('/getUserProfileInfo', getUserProfileInfo);
 
 

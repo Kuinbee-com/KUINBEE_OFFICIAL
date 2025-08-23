@@ -1,4 +1,4 @@
-import { Response, NextFunction, RequestHandler } from "express";
+import { Response, NextFunction } from "express";
 import { ICustomRequest } from "../../../interfaces/custom/customeRequestInterface";
 import { decodeAuthToken } from "../../../utility/common/security/jwtUtils";
 import { IMinimalLoginToken } from "../../../interfaces/custom/tokenInterface";
@@ -20,9 +20,7 @@ const requireAuth = async (req: ICustomRequest, res: Response, next: NextFunctio
         // ! HERE it SHOULD BE IDENTITY TOKEN 
         req.identityToken = decoded.decodedToken?.identityCode;
         return next();
-    } catch (err) {
-        res.status(500).json({ success: false, error: 'Internal server error' });
-    }
+    } catch (error) { res.status(500).json({ success: false, error: `Internal server error: ${error}` }); }
 };
 
 export { requireAuth };
