@@ -27,11 +27,18 @@ const upsertUserProfileInfo = async (req: ICustomRequest, res: Response<IUnified
 
 const generateDatasetDownloadURL = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const { datasetId, fileFormat, isPaid, userId, isAgreedToLicense } = req.body;
+        const { id, fileFormat, isPaid, userId, isAgreedToLicense } = req.body;
+        if (!id) return void res.status(400).json({ success: false, message: "Missing datasetId fields" });
+        if (!fileFormat) return void res.status(400).json({ success: false, message: "Missing fileFormat fields" });
+        if (isPaid === undefined && typeof isPaid !== "boolean") return void res.status(400).json({ success: false, message: "Missing isPaid fields" });
         if (!isAgreedToLicense) return void res.status(403).json({ success: false, message: "You must agree to the license terms to download this dataset." });
+
+        const dataset = await prisma.dataset.findUnique({ where: { id } });
+        if (!dataset) return void res.status(404).json({ success: false, message: "Dataset not found" });
+
         const [downloadURL] = await Promise.all([
-            generateDatasetDownloadURLHelper(datasetId, fileFormat, isPaid),
-            await prisma.datasetLookup.upsert({ where: { userId_datasetId: { userId, datasetId, }, }, update: {}, create: { user: { connect: { id: userId } }, dataset: { connect: { id: datasetId } }, }, })]);
+            generateDatasetDownloadURLHelper(id, fileFormat, isPaid),
+            await prisma.datasetLookup.upsert({ where: { userId_datasetId: { userId, datasetId: id, }, }, update: {}, create: { user: { connect: { id: userId } }, dataset: { connect: { id } }, }, })]);
         return void res.status(200).json({ success: true, data: { downloadURL } });
     } catch (error) {
         return void handleCatchError(req, res, error);

@@ -88,6 +88,14 @@ const getAllUploadedDatasets = async (req: ICustomAdminRequest, res: Response<IU
 const generateDatasetDownloadURL = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const { id, fileFormat, isPaid } = req.body;
+        // TODO : NEED TO CREATE VALIDATION MIDDLEWARE FOR THIS ROI+UTE 
+        if (!id) return void res.status(400).json({ success: false, message: "Missing id fields" });
+        if (!fileFormat) return void res.status(400).json({ success: false, message: "Missing fileFormat fields" });
+        if (isPaid === undefined && typeof isPaid !== "boolean") return void res.status(400).json({ success: false, message: "Missing isPaid fields" });
+
+        const dataset = await prisma.dataset.findUnique({ where: { id } });
+        if (!dataset) return void res.status(404).json({ success: false, message: "Dataset not found" });
+
         const downloadURL = await generateDatasetDownloadURLHelper(id, fileFormat, isPaid);
         res.status(200).json({ success: true, data: { downloadURL } });
     } catch (error) {
