@@ -31,7 +31,7 @@ const generateDatasetDownloadURL = async (req: ICustomRequest, res: Response<IUn
         if (!fileFormat) return void res.status(400).json({ success: false, message: "Missing fileFormat fields" });
         if (isPaid === undefined && typeof isPaid !== "boolean") return void res.status(400).json({ success: false, message: "Missing isPaid fields" });
         if (!isAgreedToLicense) return void res.status(403).json({ success: false, message: "You must agree to the license terms to download this dataset." });
-        console.log(req.id);
+
         const [downloadURL] = await Promise.all([
             generateDatasetDownloadURLHelper(id, fileFormat, isPaid),
             await prisma.datasetLookup.upsert({ where: { userId_datasetId: { userId: req.id as string, datasetId: id, }, }, update: {}, create: { user: { connect: { id: req.id as string } }, dataset: { connect: { id } }, }, })]);
