@@ -120,12 +120,17 @@ const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IU
         if (datasets.length === 0) return void res.status(400).json({ success: false, message: 'No datasets provided' });
         if (datasets.length > 10) return void res.status(400).json({ success: false, message: 'Too many datasets provided, limit is 10' });
 
+        const primaryIds = datasets.map(d => d.primaryCategoryId);
+        const validPrimaryIds = await prisma.category.findMany({ where: { id: { in: primaryIds } }, select: { id: true } });
+        const validIdSet = new Set(validPrimaryIds.map(p => p.id));
+
+        for (const d of datasets) { if (!validIdSet.has(d.primaryCategoryId)) { return void res.status(400).json({ success: false, message: `Invalid primaryCategoryId: ${d.primaryCategoryId}` }); } }
         const datasetData = datasets.map(dataset => ({
             title: dataset.title, primaryCategoryId: dataset.primaryCategoryId, sourceId: dataset.sourceId, price: dataset.price, isPaid: dataset.isPaid,
             license: dataset.license, superType: dataset.superTypes, datasetUniqueId: dataset.datasetUniqueId
         }) as Partial<Prisma.DatasetCreateManyInput>) as Prisma.DatasetCreateManyInput[];
 
-        const [, createdDatasets] = await Promise.all([
+        const [, createdDatasets] = await prisma.$transaction([
             prisma.dataset.createMany({ data: datasetData, skipDuplicates: true }),
             prisma.dataset.findMany({
                 where: { datasetUniqueId: { in: datasets.map(d => d.datasetUniqueId) } },

@@ -61,6 +61,7 @@ const getDatasetById = async (req: ICustomAdminRequest, res: Response<IUnifiedRe
 const getAllNonUploadedDatasetsInfo = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const datasets = await prisma.dataset.findMany({ where: { uploaded: false }, select: { id: true, title: true, isPaid: true, aboutDatasetInfo: { select: { dataFormatInfo: { select: { fileFormat: true } } } } } });
+        console.log(datasets);
         const response = datasets.map(dataset => ({
             id: dataset.id,
             title: dataset.title,
