@@ -1,5 +1,4 @@
-import { AboutDatasetInfo } from './../../../node_modules/.prisma/client/index.d';
-import { FileFormatOptions, fileFormatOptions } from './../../constants/modelConstants';
+import { FileFormatOptions } from './../../constants/modelConstants';
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../client/prisma/getPrismaClient";
 import { IDatasetBaseInput } from "../../interfaces/custom/customeInterfaces";
@@ -56,7 +55,7 @@ const deleteSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResp
     try {
         const deletedSource = await prisma.source.delete({ where: { id: req.paramsId } });
         return void res.status(200).json({ success: true, data: { deleted: deletedSource.name } });
-    } catch (error) { return void res.status(500).json({ success: false, message: 'Internal server error' }); }
+    } catch (error) { return void handleCatchError(req, res, error); }
 };
 
 const editSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
@@ -122,14 +121,8 @@ const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IU
         if (datasets.length > 10) return void res.status(400).json({ success: false, message: 'Too many datasets provided, limit is 10' });
 
         const datasetData = datasets.map(dataset => ({
-            title: dataset.title,
-            primaryCategoryId: dataset.primaryCategoryId,
-            sourceId: dataset.sourceId,
-            price: dataset.price,
-            isPaid: dataset.isPaid,
-            license: dataset.license,
-            superType: dataset.superTypes,
-            datasetUniqueId: dataset.datasetUniqueId
+            title: dataset.title, primaryCategoryId: dataset.primaryCategoryId, sourceId: dataset.sourceId, price: dataset.price, isPaid: dataset.isPaid,
+            license: dataset.license, superType: dataset.superTypes, datasetUniqueId: dataset.datasetUniqueId
         }) as Partial<Prisma.DatasetCreateManyInput>) as Prisma.DatasetCreateManyInput[];
 
         const [, createdDatasets] = await Promise.all([
@@ -154,7 +147,7 @@ const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IU
                             dataQuality: dataset.aboutDatasetInfo?.dataQuality as string,
                             dataset: { connect: { id: created.id } },
                             dataFormatInfo: {
-                                create: { rows: dataset.aboutDatasetInfo?.dataFormatInfo?.rows! as number, cols: dataset.aboutDatasetInfo?.dataFormatInfo?.cols! as number, fileFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat! as string, }
+                                create: { rows: dataset.aboutDatasetInfo?.dataFormatInfo?.rows as number, cols: dataset.aboutDatasetInfo?.dataFormatInfo?.cols as number, fileFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat as string, }
                             }, features: dataset.aboutDatasetInfo?.features ? { create: dataset.aboutDatasetInfo.features.map(f => ({ content: f.content })) } : undefined
                         }
                     }),
