@@ -44,6 +44,7 @@ const getDatasetById = async (req: ICustomRequest, res: Response<IUnifiedRespons
 };
 const getAllUploadedDatasets = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
+        if (!req.query.limit || !req.query.offset) return void res.status(400).json({ success: false, message: "Limit and offset are required" });
         const datasets = await getAllUploadedDatasetHelper(req.query as unknown as IGetUploadedDatasetQuery);
         return void res.status(200).json({ success: true, data: datasets });
     } catch (error) {

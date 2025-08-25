@@ -4,8 +4,8 @@ import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customeInterfa
 const getAllUploadedDatasetHelper = async (query?: IGetUploadedDatasetQuery) => {
     try {
         const { limit, offset, filter, search } = query || {};
-        if (!limit || !offset) throw new Error("Limit and offset are required");
-
+        const numLimit = limit ? parseInt(limit as unknown as string, 10) : 10;
+        const numOffset = offset ? parseInt(offset as unknown as string, 10) : 0;
         const where: Prisma.DatasetWhereInput = {
             uploaded: true,
             isPaid: filter?.isPaid !== undefined ? filter.isPaid : undefined,
@@ -16,7 +16,7 @@ const getAllUploadedDatasetHelper = async (query?: IGetUploadedDatasetQuery) => 
         };
 
         const datasets = await prisma.dataset.findMany({
-            where, orderBy: { DatasetLookup: { _count: 'desc' } }, skip: offset, take: limit,
+            where, orderBy: { DatasetLookup: { _count: 'desc' } }, skip: numOffset, take: numLimit,
             select: {
                 id: true, title: true, isPaid: true, price: true, _count: { select: { DatasetLookup: true } }, primaryCategory: { select: { name: true } },
                 source: { select: { name: true } }, aboutDatasetInfo: { select: { overview: true, dataFormatInfo: { select: { fileFormat: true } } } },
