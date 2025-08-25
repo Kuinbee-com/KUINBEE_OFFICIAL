@@ -74,6 +74,5 @@ interface IGetUploadedDatasetFilter {
     isPaid?: boolean;
     category?: string;
     source?: string;
-    location?: string;
     superType?: DatasetSuperTypeOptions[number];
 }
