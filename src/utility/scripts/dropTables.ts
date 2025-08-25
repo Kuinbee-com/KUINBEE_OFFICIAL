@@ -19,8 +19,7 @@ const dropTables = async () => {
         console.error("Error dropping tables:", error);
     }
 };
-
-
-async () => {
+ 
+(async () => {
     await dropTables();
-};
+})();

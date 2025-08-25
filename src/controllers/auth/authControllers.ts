@@ -23,7 +23,6 @@ const loginPassword = async (req: ICustomLogInRequest, res: Response<IUnifiedRes
             ...(user.role === 'USER' && { userId: user.userId ?? undefined }),
             identityCode
         } satisfies IMinimalLoginToken;
-
         const token = generateAuthToken(jwtPayload);
         return void res.status(200).json({ success: true, data: { token, identityCode } });
     } catch (error) {

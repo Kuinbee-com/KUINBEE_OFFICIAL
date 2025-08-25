@@ -1,4 +1,4 @@
-import { AdminPermissionOptions, adminPermissionOptions } from './../../constants/modelConstants';
+import { AdminPermissionOptions } from './../../constants/modelConstants';
 import { prisma } from "../../client/prisma/getPrismaClient";
 
 export const getAdminPermissions = async (id: string): Promise<AdminPermissionOptions[]> => {

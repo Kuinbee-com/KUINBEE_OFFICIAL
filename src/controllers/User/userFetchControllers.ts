@@ -44,7 +44,7 @@ const getDatasetById = async (req: ICustomRequest, res: Response<IUnifiedRespons
 };
 const getAllUploadedDatasets = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const datasets = await getAllUploadedDatasetHelper(req?.query as unknown as IGetUploadedDatasetQuery);
+        const datasets = await getAllUploadedDatasetHelper(req.query as unknown as IGetUploadedDatasetQuery);
         return void res.status(200).json({ success: true, data: datasets });
     } catch (error) {
         return void handleCatchError(req, res, error);

@@ -1,5 +1,5 @@
 import { AdminPermissionOptions, RoleOptions } from '../../constants/modelConstants';
-import e, { Request } from "express";
+import  { Request } from "express";
 import { SuperAdminPermissionsOptions } from "../../constants/modelConstants";
 
 

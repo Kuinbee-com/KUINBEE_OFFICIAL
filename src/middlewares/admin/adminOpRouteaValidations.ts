@@ -3,6 +3,7 @@ import { ICustomAdminRequest } from "../../interfaces/custom/customeRequestInter
 import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
 import { NextFunction, Response } from "express";
 import { datasetInputValidation } from "../../validations/personalInfoValidation";
+import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
 
 export const handleCreateCategoryValidation = (req: ICustomAdminRequest, res: Response<IUnifiedResponse>, next: NextFunction) => {
   try {
@@ -11,7 +12,7 @@ export const handleCreateCategoryValidation = (req: ICustomAdminRequest, res: Re
     if (!categoryName) return void res.status(400).json({ success: false, message: 'categoryName is required.' });
     return next();
   } catch (error) {
-    return void res.status(500).json({ success: false, error: 'Internal server error' });
+    return void handleCatchError(req, res, error);
   }
 }
 
@@ -29,7 +30,7 @@ export const handleAddDatasetInfoValidation = (req: ICustomAdminRequest, res: Re
 
     return next();
   } catch (error) {
-    return void res.status(500).json({ success: false, error: 'Internal server error' });
+    return void handleCatchError(req, res, error);
   }
 };
 
@@ -48,6 +49,6 @@ export const handleAddMultipleDatasetInfoValidation = (req: ICustomAdminRequest,
     });
     return next();
   } catch (error) {
-    return void res.status(500).json({ success: false, error: 'Internal server error' });
+    return void handleCatchError(req, res, error);
   }
 };

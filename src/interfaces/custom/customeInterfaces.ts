@@ -1,6 +1,6 @@
 import { Gender, Prisma } from "@prisma/client";
 import { IAdmin } from "../model/modelnterface";
-import { AdminPermissionOptions, FileFormatOptions } from "../../constants/modelConstants";
+import { AdminPermissionOptions, DatasetSuperTypeOptions, FileFormatOptions } from "../../constants/modelConstants";
 
 export type AdminBaseInput = Omit<IAdmin, "createdBy" | "personalInfo" | "permissions" | "Auth" | "createdAt" | "personalInfoId" | "adminPermissionsId">
 export type PersonalInfoInput = Omit<Prisma.PersonalInfoCreateInput, "id" | "Admin" | "SuperAdmin">;
@@ -75,4 +75,5 @@ interface IGetUploadedDatasetFilter {
     category?: string;
     source?: string;
     location?: string;
+    superType?: DatasetSuperTypeOptions[number];
 }

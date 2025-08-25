@@ -14,9 +14,9 @@ applyBigIntJsonSerializer();
 const app = express();
 app.use(express.json());
 app.use(corsMiddleware);
-// unauthenticated routes
+
 app.use('/public', publicRouter);
-app.use('/api/v1/auth', authRouter); // Login route for admins and users 
+app.use('/api/v1/auth', authRouter);
 
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/user', userRouter);

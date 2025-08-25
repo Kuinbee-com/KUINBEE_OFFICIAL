@@ -10,6 +10,7 @@ import { createPresignedUploadUrl } from '../../client/aws/helpers/presignedUrls
 import { getDatasetS3Key } from '../../constants/awsConstants';
 import { getAllUploadedDatasetHelper, getDatasetByIdHelper } from '../../helpers/datasets/datasetFetchHelper';
 import { generateDatasetDownloadURLHelper } from '../../helpers/datasets/datasetOperationHelper';
+import { IGetUploadedDatasetQuery } from '../../interfaces/custom/customeInterfaces';
 
 
 // **************************** CATEGORY CONTROLLER ****************************
@@ -76,11 +77,8 @@ const getAllNonUploadedDatasetsInfo = async (req: ICustomAdminRequest, res: Resp
 
 const getAllUploadedDatasets = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        const datasets = await getAllUploadedDatasetHelper();
-
-        res.status(200).json({
-            success: true, data: datasets
-        });
+        const datasets = await getAllUploadedDatasetHelper(req.query as unknown as IGetUploadedDatasetQuery);
+        res.status(200).json({ success: true, data: datasets });
     } catch (error) {
         return void handleCatchError(req, res, error);
     }

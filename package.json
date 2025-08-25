@@ -21,7 +21,9 @@
     "postinstall": "prisma generate --no-engine",
     "prepare": "prisma generate --no-engine",
     "vercel-build": "npm run build",
-    "clear": "ts-node src/utility/scripts/dropTables.ts"
+    "clear": "ts-node src/utility/scripts/dropTables.ts",
+    "create-search-index": "ts-node src/utility/scripts/createSearchIndex.ts",
+    "migrate-dev": "npx prisma migrate dev"
   },
   "prisma": {
     "seed": "ts-node src/client/prisma/seed.ts"
