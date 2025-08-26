@@ -4,6 +4,7 @@ import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterfa
 import { NextFunction, Response } from "express";
 import { datasetInputValidation } from "../../validations/personalInfoValidation";
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
+import { FileFormatOptions, fileFormatOptions } from "../../constants/modelConstants";
 
 export const handleCreateCategoryValidation = (req: ICustomAdminRequest, res: Response<IUnifiedResponse>, next: NextFunction) => {
   try {
@@ -42,6 +43,18 @@ export const handleAddMultipleDatasetInfoValidation = (req: ICustomAdminRequest,
     datasets.forEach(dataset => {
       const missingFields = datasetInputValidation(dataset);
       if (missingFields) return void res.status(400).json({ success: false, message: `Missing field in dataset: ${missingFields}` });
+
+      const { overview, description, dataQuality, dataFormatInfo } = dataset.aboutDatasetInfo || {};
+      if (!overview) return void res.status(400).json({ success: false, message: 'Overview is required in aboutDatasetInfo.' });
+      if (!description) return void res.status(400).json({ success: false, message: 'Description is required in aboutDatasetInfo.' });
+      if (!dataQuality) return void res.status(400).json({ success: false, message: 'Data quality is required in aboutDatasetInfo.' });
+      if (!dataFormatInfo) return void res.status(400).json({ success: false, message: 'Data format info is required in aboutDatasetInfo.' });
+
+      const { rows, cols, fileFormat } = dataFormatInfo || {};
+      if (!rows) return void res.status(400).json({ success: false, message: 'Rows are required in dataFormatInfo.' });
+      if (!cols) return void res.status(400).json({ success: false, message: 'Cols are required in dataFormatInfo.' });
+      if (!fileFormat) return void res.status(400).json({ success: false, message: 'File format is required in dataFormatInfo.' });
+      if (!fileFormatOptions.includes(fileFormat as FileFormatOptions)) return void res.status(400).json({ success: false, message: 'Invalid file format in dataFormatInfo.' });
 
       const { isPaid, price } = dataset;
       if (isPaid && !price) return void res.status(400).json({ success: false, message: 'Price is required when dataset is paid.' });

@@ -9,7 +9,9 @@ export const createPresignedDownloadUrl = async (key: string): Promise<string> =
 };
 
 export const createPresignedUploadUrl = async (key: string): Promise<string> => {
-    const contentType = (key.endsWith(".csv")) ? "text/csv" : (key.endsWith(".xlsx")) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : undefined;
+    const contentType =
+        (key.endsWith(".csv")) ? "text/csv" : (key.endsWith(".xlsx")) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
+            (key.endsWith('.xml') ? "application/xml" : (key.endsWith('.xls') ? "application/vnd.ms-excel" : undefined));
     const command = new PutObjectCommand({ Bucket: AWS_S3_BUCKET_NAME, Key: key, ...(contentType && { ContentType: contentType }) });
     return await getSignedUrl(s3Client, command, { expiresIn: 600 });
 };
