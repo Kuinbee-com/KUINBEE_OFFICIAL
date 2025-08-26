@@ -54,7 +54,7 @@ export const handleAddMultipleDatasetInfoValidation = (req: ICustomAdminRequest,
       if (!rows) return void res.status(400).json({ success: false, message: 'Rows are required in dataFormatInfo.' });
       if (!cols) return void res.status(400).json({ success: false, message: 'Cols are required in dataFormatInfo.' });
       if (!fileFormat) return void res.status(400).json({ success: false, message: 'File format is required in dataFormatInfo.' });
-      if (!fileFormatOptions.includes(fileFormat as FileFormatOptions)) return void res.status(400).json({ success: false, message: 'Invalid file format in dataFormatInfo.' });
+      if (!fileFormatOptions.includes(fileFormat as FileFormatOptions)) return void res.status(400).json({ success: false, message: `Invalid file format in dataFormatInfo. ${fileFormat}` });
 
       const { isPaid, price } = dataset;
       if (isPaid && !price) return void res.status(400).json({ success: false, message: 'Price is required when dataset is paid.' });
