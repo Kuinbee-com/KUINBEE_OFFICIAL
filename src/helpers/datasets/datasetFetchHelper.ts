@@ -4,16 +4,18 @@ import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customeInterfa
 const getAllUploadedDatasetHelper = async (query?: IGetUploadedDatasetQuery) => {
     try {
         const { limit, offset, filter, search } = query || {};
+        const parsedFilter = filter ? JSON.parse(filter as unknown as string) : {};
         const numLimit = limit ? parseInt(limit as unknown as string, 10) : 10;
         const numOffset = offset ? parseInt(offset as unknown as string, 10) : 0;
         const where: Prisma.DatasetWhereInput = {
             uploaded: true,
-            isPaid: filter?.isPaid !== undefined ? filter.isPaid : undefined,
-            primaryCategoryId: filter?.category !== undefined ? filter.category : undefined,
-            sourceId: filter?.source !== undefined ? filter.source : undefined,
-            superType: filter?.superType !== undefined ? filter.superType : undefined,
+            isPaid: parsedFilter?.isPaid !== undefined ? parsedFilter.isPaid : undefined,
+            primaryCategoryId: parsedFilter?.category !== undefined ? parsedFilter.category : undefined,
+            sourceId: parsedFilter?.source !== undefined ? parsedFilter.source : undefined,
+            superType: parsedFilter?.superType !== undefined ? parsedFilter.superType : undefined,
             title: search ? { contains: search, mode: "insensitive" } : undefined
         };
+        console.log(where);
 
         const datasets = await prisma.dataset.findMany({
             where, orderBy: { DatasetLookup: { _count: 'desc' } }, skip: numOffset, take: numLimit,
