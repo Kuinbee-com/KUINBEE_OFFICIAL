@@ -128,26 +128,26 @@ const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IU
         if (datasets.length === 0) return void res.status(400).json({ success: false, message: 'No datasets provided' });
         if (datasets.length > 10) return void res.status(400).json({ success: false, message: 'Too many datasets provided, limit is 10' });
 
-        await Promise.all(datasets.map(d => { prisma.dataset.findUnique({ where: { datasetUniqueId: d.datasetUniqueId } }).then(existing => { if (existing) return void res.status(404).json({ success: false, message: `Dataset with unique ID ${d.datasetUniqueId} not found` }); }); }));
-        const datasetData = datasets.map(dataset => ({
-            title: dataset.title, primaryCategoryId: dataset.primaryCategoryId, sourceId: dataset.sourceId, price: dataset.price, isPaid: dataset.isPaid,
-            license: dataset.license, superType: dataset.superTypes, datasetUniqueId: dataset.datasetUniqueId
-        }) as Partial<Prisma.DatasetCreateManyInput>) as Prisma.DatasetCreateManyInput[];
+        const results = await prisma.$transaction(async (tx) => {
+            await Promise.all(datasets.map(d => tx.dataset.findUnique({ where: { datasetUniqueId: d.datasetUniqueId } }).then(existing => { if (existing) throw new Error(`Dataset with unique ID ${d.datasetUniqueId} already exists`); })));
+            const datasetData = datasets.map(dataset => ({
+                title: dataset.title, primaryCategoryId: dataset.primaryCategoryId, sourceId: dataset.sourceId, price: dataset.price, isPaid: dataset.isPaid,
+                license: dataset.license, superType: dataset.superTypes, datasetUniqueId: dataset.datasetUniqueId
+            }) as Partial<Prisma.DatasetCreateManyInput>) as Prisma.DatasetCreateManyInput[];
 
-        const [, createdDatasets] = await prisma.$transaction([
-            prisma.dataset.createMany({ data: datasetData, skipDuplicates: true }),
-            prisma.dataset.findMany({
+            await tx.dataset.createMany({ data: datasetData, skipDuplicates: true });
+            const createdDatasets = await tx.dataset.findMany({
                 where: { datasetUniqueId: { in: datasets.map(d => d.datasetUniqueId) } },
                 select: { id: true, isPaid: true, datasetUniqueId: true }
-            })
-        ]);
-        const datasetLookup = new Map(datasets.map(d => [d.datasetUniqueId, d]));
-        const results: { id: string; dataFormat: string }[] = [];
-        await prisma.$transaction(async (tx) => {
+            });
+
+            const datasetLookup = new Map(datasets.map(d => [d.datasetUniqueId, d]));
+            const txResults: { id: string; dataFormat: string }[] = [];
+
             await Promise.all(createdDatasets.map((created) => {
                 const dataset = datasetLookup.get(created.datasetUniqueId);
-                if (!dataset) return void res.status(404).json({ success: false, message: `Dataset with unique ID ${created.datasetUniqueId} not found in input` });
-                results.push({ id: created.id, dataFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat ?? 'csv' });
+                if (!dataset) throw new Error(`Dataset with unique ID ${created.datasetUniqueId} not found in input`);
+                txResults.push({ id: created.id, dataFormat: dataset.aboutDatasetInfo?.dataFormatInfo?.fileFormat ?? 'csv' });
                 return Promise.all([
                     tx.aboutDatasetInfo.create({
                         data: {
@@ -166,6 +166,8 @@ const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IU
                     dataset.categories ? tx.categoryLookup.createMany({ data: dataset.categories.map(cat => ({ datasetId: created.id, categoryId: cat.id })), skipDuplicates: true }) : Promise.resolve()
                 ]);
             }));
+
+            return txResults;
         });
 
         return void res.status(201).json({ success: true, data: results });
@@ -173,5 +175,6 @@ const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IU
         return void handleCatchError(req, res, error);
     }
 };
+
 
 export { createCategory, deleteCategory, addDataset, createSource, deleteSource, editSource, editCategory, addMultipleDatasetInfo };
