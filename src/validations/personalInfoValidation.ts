@@ -1,5 +1,5 @@
-import { IDatasetBaseInput } from '../interfaces/custom/customeInterfaces';
-import { PersonalInfoInput } from '../interfaces/custom/customeInterfaces';
+import { IDatasetBaseInput } from '../interfaces/custom/customInterfaces';
+import { PersonalInfoInput } from '../interfaces/custom/customInterfaces';
 
 
 export const adminPersonalInfoValidation = (personalInfo: PersonalInfoInput): string | null => {

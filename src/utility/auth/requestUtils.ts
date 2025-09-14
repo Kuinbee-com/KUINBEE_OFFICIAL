@@ -1,4 +1,4 @@
-import { ICustomAdminRequest, ICustomeSuperAdminRequest } from "../../interfaces/custom/customeRequestInterface";
+import { ICustomAdminRequest, ICustomeSuperAdminRequest } from "../../interfaces/custom/customRequestInterface";
 import { Response, NextFunction } from "express";
 
 type IKuinbeeCombinedRequest = ICustomeSuperAdminRequest & ICustomAdminRequest; // add for all types of users here 

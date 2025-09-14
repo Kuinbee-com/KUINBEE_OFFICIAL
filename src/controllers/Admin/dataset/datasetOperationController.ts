@@ -1,13 +1,13 @@
-import { FileFormatOptions } from './../../constants/modelConstants';
+import { FileFormatOptions } from '../../../constants/modelConstants';
 import { AdminPermission, Prisma } from "@prisma/client";
-import { prisma } from "../../client/prisma/getPrismaClient";
-import { IDatasetBaseInput } from "../../interfaces/custom/customeInterfaces";
-import { ICustomAdminRequest } from "../../interfaces/custom/customeRequestInterface";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { prisma } from "../../../client/prisma/getPrismaClient";
+import { IDatasetBaseInput } from "../../../interfaces/custom/customInterfaces";
+import { ICustomAdminRequest } from "../../../interfaces/custom/customRequestInterface";
+import { IUnifiedResponse } from "../../../interfaces/custom/customResponseInterface";
 import { Response } from "express";
-import { createPresignedUploadUrl } from "../../client/aws/helpers/presignedUrls";
-import { getDatasetS3Key } from "../../constants/awsConstants";
-import { handleCatchError } from '../../utility/common/handleCatchErrorHelper';
+import { createPresignedUploadUrl } from "../../../client/aws/helpers/presignedUrls";
+import { getDatasetS3Key } from "../../../constants/awsConstants";
+import { handleCatchError } from '../../../utility/common/handleCatchErrorHelper';
 
 
 
@@ -15,7 +15,7 @@ import { handleCatchError } from '../../utility/common/handleCatchErrorHelper';
 const createCategory = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const { categoryName } = req.body;
-        if (!req.AdminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create category' });
+        if (!req.adminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create category' });
         const createdCategory = await prisma.category.create({ data: { name: categoryName.trim(), createdBy: req?.id as string } });
         return void res.status(201).json({ success: true, data: { id: createdCategory.id, categoryName: createdCategory.name } });
     } catch (error) {
@@ -24,7 +24,7 @@ const createCategory = async (req: ICustomAdminRequest, res: Response<IUnifiedRe
 };
 const deleteCategory = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        if (!req.AdminPermissions?.includes(AdminPermission['DELETE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to delete category' });
+        if (!req.adminPermissions?.includes(AdminPermission['DELETE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to delete category' });
         const deletedCategory = await prisma.category.delete({ where: { id: req.paramsId } });
         return void res.status(200).json({ success: true, data: { deleted: deletedCategory.name } });
     } catch (error) { return void handleCatchError(req, res, error); }
@@ -33,7 +33,7 @@ const deleteCategory = async (req: ICustomAdminRequest, res: Response<IUnifiedRe
 const editCategory = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
         const { categoryName } = req.body;
-        if (!req.AdminPermissions?.includes(AdminPermission['UPDATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to update category' });
+        if (!req.adminPermissions?.includes(AdminPermission['UPDATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to update category' });
         if (!categoryName) return void res.status(400).json({ success: false, message: 'categoryName is required.' });
         const updatedCategory = await prisma.category.update({ where: { id: req.paramsId }, data: { name: categoryName.trim() } });
         return void res.status(200).json({ success: true, data: { id: updatedCategory.id, name: updatedCategory.name } });
@@ -45,7 +45,7 @@ const editCategory = async (req: ICustomAdminRequest, res: Response<IUnifiedResp
 // **************************** SOURCE CONTROLLER ****************************
 const createSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        if (!req.AdminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create source' });
+        if (!req.adminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create source' });
         if (!req.body || !req.body.sourceName) return void res.status(400).json({ success: false, message: 'sourceName is required.' });
         const { sourceName } = req.body;
         const createdSource = await prisma.source.create({ data: { name: sourceName.trim() } });
@@ -57,7 +57,7 @@ const createSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResp
 
 const deleteSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        if (!req.AdminPermissions?.includes(AdminPermission['DELETE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to delete source' });
+        if (!req.adminPermissions?.includes(AdminPermission['DELETE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to delete source' });
         const deletedSource = await prisma.source.delete({ where: { id: req.paramsId } });
         return void res.status(200).json({ success: true, data: { deleted: deletedSource.name } });
     } catch (error) { return void handleCatchError(req, res, error); }
@@ -65,7 +65,7 @@ const deleteSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResp
 
 const editSource = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        if (!req.AdminPermissions?.includes(AdminPermission['UPDATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to update source' });
+        if (!req.adminPermissions?.includes(AdminPermission['UPDATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to update source' });
         if (!req.body || !req.body.sourceName) return void res.status(400).json({ success: false, message: 'sourceName is required.' });
         const { sourceName } = req.body;
         const updatedSource = await prisma.source.update({ where: { id: req.paramsId }, data: { name: sourceName.trim() } });
@@ -78,7 +78,7 @@ const editSource = async (req: ICustomAdminRequest, res: Response<IUnifiedRespon
 // **************************** DATASET CONTROLLER ******************************************
 const addDataset = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        if (!req.AdminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create dataset' });
+        if (!req.adminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create dataset' });
         const dataset = req.body as IDatasetBaseInput;
         const createdDataset = await prisma.$transaction(async (tx) => {
             return await tx.dataset.create({
@@ -123,7 +123,7 @@ const addDataset = async (req: ICustomAdminRequest, res: Response<IUnifiedRespon
 
 const addMultipleDatasetInfo = async (req: ICustomAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {
-        if (!req.AdminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create dataset' });
+        if (!req.adminPermissions?.includes(AdminPermission['CREATE'])) return void res.status(403).json({ success: false, error: 'Forbidden you dont have permission to create dataset' });
         const datasets = req.body as IDatasetBaseInput[];
         if (datasets.length === 0) return void res.status(400).json({ success: false, message: 'No datasets provided' });
         if (datasets.length > 10) return void res.status(400).json({ success: false, message: 'Too many datasets provided, limit is 10' });

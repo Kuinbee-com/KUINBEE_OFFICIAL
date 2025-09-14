@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client";
 
 import { Response } from "express";
 import { createProjectionSelect } from "../../utility/projectionTypes";
-import { ICustomeSuperAdminRequest } from "../../interfaces/custom/customeRequestInterface";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { ICustomeSuperAdminRequest } from "../../interfaces/custom/customRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
 import { prisma } from "../../client/prisma/getPrismaClient";
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
 

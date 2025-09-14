@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { ICustomLogInRequest } from "../../../interfaces/custom/customeRequestInterface";
-import { IUnifiedResponse } from "../../../interfaces/custom/customeResponseInterface";
+import { ICustomLogInRequest } from "../../../interfaces/custom/customRequestInterface";
+import { IUnifiedResponse } from "../../../interfaces/custom/customResponseInterface";
 import { emailInputValidation } from "../../../validations/inputValidation";
 
 

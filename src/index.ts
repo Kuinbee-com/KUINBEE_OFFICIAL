@@ -1,7 +1,7 @@
 import express from 'express';
-import adminRouter from './routes/Admin/adminRouter';
-import userRouter from './routes/User/userRouter';
-import superAdminRouter from './routes/Superadmin/superAdminRouter';
+import adminRouter from './routes/admin/adminRouter';
+import userRouter from './routes/user/userRouter';
+import superAdminRouter from './routes/superAdmin/superAdminRouter';
 import publicRouter from './routes/public/publicRouter';
 import authRouter from './routes/authRouter/authRouter';
 import { PORT } from './env';

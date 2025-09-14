@@ -3,8 +3,8 @@ import { Response } from "express";
 import { Prisma, Role } from "@prisma/client";
 import { checkAdminConflicts, checkAuthEmailConflict } from "../../helpers/auth/conflictCheckHelper";
 import { createDefaultPassword } from "../../utility/common/security/crypto";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
-import { ICustomeSuperAdminRequest } from "../../interfaces/custom/customeRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
+import { ICustomeSuperAdminRequest } from "../../interfaces/custom/customRequestInterface";
 import { prisma } from '../../client/prisma/getPrismaClient';
 
 const addAdmin = async (req: ICustomeSuperAdminRequest, res: Response<IUnifiedResponse>): Promise<void> => {

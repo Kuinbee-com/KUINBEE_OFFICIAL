@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../client/prisma/getPrismaClient";
-import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customeInterfaces";
+import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customInterfaces";
 const getAllUploadedDatasetHelper = async (query?: IGetUploadedDatasetQuery) => {
     try {
         const { limit, offset, filter, search } = query || {};

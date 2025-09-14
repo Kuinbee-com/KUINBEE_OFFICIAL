@@ -6,6 +6,5 @@ import { adminUserStatRouter } from './adminUserStatRouter';
 const adminUserRouter = express.Router();
 
 usePath(adminUserRouter, adminUserOpRouter, '/operations');
-usePath(adminUserRouter, adminUserStatRouter, '/operations');
-
+usePath(adminUserOpRouter, adminUserStatRouter, '/stats');
 export { adminUserRouter };

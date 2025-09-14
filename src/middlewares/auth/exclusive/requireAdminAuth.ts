@@ -1,8 +1,9 @@
 import { NextFunction, Response } from "express";
-import { ICustomAdminRequest } from "../../../interfaces/custom/customeRequestInterface";
+import { ICustomAdminRequest } from "../../../interfaces/custom/customRequestInterface";
 import { KUINBEE_ADMIN_IDENTITY_CODE } from "../../../env";
 import { getAdminPermissions } from "../../../helpers/Admin/adminHelper";
 import { AdminPermissionOptions } from "../../../constants/modelConstants";
+import { handleCatchError } from "../../../utility/common/handleCatchErrorHelper";
 
 const requireAdminAuth = async (req: ICustomAdminRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -10,11 +11,11 @@ const requireAdminAuth = async (req: ICustomAdminRequest, res: Response, next: N
         if (req.identityToken === undefined || req.authToken === undefined || req.identityToken !== KUINBEE_ADMIN_IDENTITY_CODE)
             return void res.status(401).json({ success: false, error: 'Authentication token is missing or invalid' });
         const permissions = await getAdminPermissions(req.id as string);
-        req.AdminPermissions = permissions satisfies AdminPermissionOptions[];
+        req.adminPermissions = permissions satisfies AdminPermissionOptions[];
 
         return next();
     } catch (error) {
-        console.error("need to add handlecatch function here", error);
+        return void handleCatchError(req, res, error);
     }
 };
 

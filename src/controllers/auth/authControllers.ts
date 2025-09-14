@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
-import { ICustomLogInRequest } from "../../interfaces/custom/customeRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
+import { ICustomLogInRequest } from "../../interfaces/custom/customRequestInterface";
 import { verifyPassword } from "../../utility/common/security/crypto";
 
 import { generateAuthToken } from "../../utility/common/security/jwtUtils";

@@ -1,7 +1,7 @@
 import express from "express";
 import { handleAddDatasetInfoValidation, handleAddMultipleDatasetInfoValidation, handleCreateCategoryValidation } from "../../../middlewares/admin/adminOpRouteaValidations";
-import { addDataset, addMultipleDatasetInfo, createCategory, createSource, deleteCategory, deleteSource, editCategory, editSource } from "../../../controllers/Admin/adminOperationController";
-import { getAllCategories, getAllDatasets, getAllNonUploadedDatasetsInfo, getAllSources, getAllUploadedDatasets, getDatasetById, generateDatasetDownloadURL, generateDatasetUploadURL } from "../../../controllers/Admin/adminFetchController";
+import { addDataset, addMultipleDatasetInfo, createCategory, createSource, deleteCategory, deleteSource, editCategory, editSource } from "../../../controllers/Admin/dataset/datasetOperationController";
+import { getAllCategories, getAllDatasets, getAllNonUploadedDatasetsInfo, getAllSources, getAllUploadedDatasets, getDatasetById, generateDatasetDownloadURL, generateDatasetUploadURL } from "../../../controllers/Admin/dataset/datasetFetchController";
 import { extractIdFromParams } from "../../../utility/auth/requestUtils";
 
 const datasetOpRouter = express.Router();

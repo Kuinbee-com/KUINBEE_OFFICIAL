@@ -1,16 +1,16 @@
-import { fileFormatOptions, FileFormatOptions } from './../../constants/modelConstants';
-import { ICustomAdminRequest } from "../../interfaces/custom/customeRequestInterface";
+import { fileFormatOptions, FileFormatOptions } from '../../../constants/modelConstants';
+import { ICustomAdminRequest } from "../../../interfaces/custom/customRequestInterface";
 import { Response } from "express";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
-import { prisma } from "../../client/prisma/getPrismaClient";
-import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
-import { createProjectionSelect } from "../../utility/projectionTypes";
+import { IUnifiedResponse } from "../../../interfaces/custom/customResponseInterface";
+import { prisma } from "../../../client/prisma/getPrismaClient";
+import { handleCatchError } from "../../../utility/common/handleCatchErrorHelper";
+import { createProjectionSelect } from "../../../utility/projectionTypes";
 import { Prisma } from "@prisma/client";
-import { createPresignedUploadUrl } from '../../client/aws/helpers/presignedUrls';
-import { getDatasetS3Key } from '../../constants/awsConstants';
-import { getAllUploadedDatasetHelper, getDatasetByIdHelper } from '../../helpers/datasets/datasetFetchHelper';
-import { generateDatasetDownloadURLHelper } from '../../helpers/datasets/datasetOperationHelper';
-import { IGetUploadedDatasetQuery } from '../../interfaces/custom/customeInterfaces';
+import { createPresignedUploadUrl } from '../../../client/aws/helpers/presignedUrls';
+import { getDatasetS3Key } from '../../../constants/awsConstants';
+import { getAllUploadedDatasetHelper, getDatasetByIdHelper } from '../../../helpers/datasets/datasetFetchHelper';
+import { generateDatasetDownloadURLHelper } from '../../../helpers/datasets/datasetOperationHelper';
+import { IGetUploadedDatasetQuery } from '../../../interfaces/custom/customInterfaces';
 
 
 // **************************** CATEGORY CONTROLLER ****************************

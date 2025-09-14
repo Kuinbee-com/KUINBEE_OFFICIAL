@@ -1,5 +1,5 @@
 import { AdminPermissionOptions, RoleOptions } from '../../constants/modelConstants';
-import  { Request } from "express";
+import { Request } from "express";
 import { SuperAdminPermissionsOptions } from "../../constants/modelConstants";
 
 
@@ -21,12 +21,12 @@ interface ICustomRequest extends Request {
 
 
 interface ICustomeSuperAdminRequest extends ICustomRequest {
-    AdminPermissions?: SuperAdminPermissionsOptions[];
+    adminPermissions?: SuperAdminPermissionsOptions[];
 }
 
 
 interface ICustomAdminRequest extends ICustomRequest {
-    AdminPermissions?: AdminPermissionOptions[];
+    adminPermissions?: AdminPermissionOptions[];
 }
 
 export { ICustomLogInRequest, ICustomRequest, ICustomeSuperAdminRequest, ICustomAdminRequest };

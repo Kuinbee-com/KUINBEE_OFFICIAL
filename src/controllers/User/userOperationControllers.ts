@@ -1,8 +1,8 @@
 import { prisma } from "../../client/prisma/getPrismaClient";
 import { Response } from "express";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
-import { ICustomRequest } from "../../interfaces/custom/customeRequestInterface";
-import { IUserProfile } from "../../interfaces/custom/customeInterfaces";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
+import { ICustomRequest } from "../../interfaces/custom/customRequestInterface";
+import { IUserProfile } from "../../interfaces/custom/customInterfaces";
 import { handleCatchError } from '../../utility/common/handleCatchErrorHelper';
 import { generateDatasetDownloadURLHelper } from '../../helpers/datasets/datasetOperationHelper';
 

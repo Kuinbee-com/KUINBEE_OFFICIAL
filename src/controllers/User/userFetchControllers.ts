@@ -1,10 +1,10 @@
 import { Response } from "express";
-import { ICustomRequest } from "../../interfaces/custom/customeRequestInterface";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { ICustomRequest } from "../../interfaces/custom/customRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";
 import { prisma } from "../../client/prisma/getPrismaClient";
 import { getAllUploadedDatasetHelper, getDatasetByIdHelper } from "../../helpers/datasets/datasetFetchHelper";
-import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customeInterfaces";
+import { IGetUploadedDatasetQuery } from "../../interfaces/custom/customInterfaces";
 
 const getUserProfileInfo = async (req: ICustomRequest, res: Response<IUnifiedResponse>): Promise<void> => {
     try {

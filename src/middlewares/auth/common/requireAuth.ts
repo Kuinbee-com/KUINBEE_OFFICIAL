@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { ICustomRequest } from "../../../interfaces/custom/customeRequestInterface";
+import { ICustomRequest } from "../../../interfaces/custom/customRequestInterface";
 import { decodeAuthToken } from "../../../utility/common/security/jwtUtils";
 import { IMinimalLoginToken } from "../../../interfaces/custom/tokenInterface";
 

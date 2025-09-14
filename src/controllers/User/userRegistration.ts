@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
 import { prisma } from '../../client/prisma/getPrismaClient';
 import { Prisma, Role } from "@prisma/client";
 import { hashPassword } from '../../utility/common/security/crypto';

@@ -1,6 +1,6 @@
-import { IDatasetBaseInput } from "../../interfaces/custom/customeInterfaces";
-import { ICustomAdminRequest } from "../../interfaces/custom/customeRequestInterface";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { IDatasetBaseInput } from "../../interfaces/custom/customInterfaces";
+import { ICustomAdminRequest } from "../../interfaces/custom/customRequestInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
 import { NextFunction, Response } from "express";
 import { datasetInputValidation } from "../../validations/personalInfoValidation";
 import { handleCatchError } from "../../utility/common/handleCatchErrorHelper";

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { IUnifiedResponse } from "../../interfaces/custom/customeResponseInterface";
+import { IUnifiedResponse } from "../../interfaces/custom/customResponseInterface";
 import { emailInputValidation, strongPasswordValidation } from "../../validations/inputValidation";
 import { Gender } from "@prisma/client";
-import { IUserProfile } from "../../interfaces/custom/customeInterfaces";
+import { IUserProfile } from "../../interfaces/custom/customInterfaces";
 
 const handleUserRegistrationValidation = (req: Request, res: Response<IUnifiedResponse>, next: NextFunction) => {
     const { name, emailId, phNo, password } = req.body;
