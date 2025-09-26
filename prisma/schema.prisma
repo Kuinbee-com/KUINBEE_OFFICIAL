@@ -24,22 +24,28 @@ enum AdminPermission {
   READ
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 /// ==================== MODELS ====================
 
 model Auth {
   id        String   @id @default(cuid())
-  email     String   @unique
+  emailId   String   @unique
   password  String
   role      Role
   createdAt DateTime @default(now())
 
-  superAdminId String?
   adminId      String?
+  superAdminId String?
   userId       String?
 
-  superadmin SuperAdmin? @relation(fields: [superAdminId], references: [id])
-  admin      Admin?      @relation(fields: [adminId], references: [id])
-  user       User?       @relation(fields: [userId], references: [id])
+  Admin      Admin?      @relation("AdminToAuth", fields: [adminId], references: [id], onDelete: Cascade)
+  superadmin SuperAdmin? @relation(fields: [superAdminId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   PasswordDetails PasswordDetails?
 }
@@ -47,19 +53,18 @@ model Auth {
 /// ----------- Super Admin -----------
 
 model SuperAdmin {
-  id              String       @id @default(cuid())
+  id              String   @id @default(cuid())
   title           String
   firstName       String
   middleName      String?
   lastName        String
-  officialEmailId String       @unique
+  officialEmailId String   @unique
   personalEmailId String
-  phNo            String
-  alternativePhNo String?
-  createdAt       DateTime     @default(now())
-  personalInfoId  String
-  personalInfo    PersonalInfo @relation(fields: [personalInfoId], references: [id])
+  phNo            BigInt
+  alternativePhNo BigInt?
+  createdAt       DateTime @default(now())
 
+  PersonalInfo       PersonalInfo?      @relation("SuperAdminToPersonalInfo")
   admins             Admin[]            @relation("SuperAdminCreatedAdmins")
   updatedPermissions AdminPermissions[] @relation("UpdatedBySuperAdmin")
   Auth               Auth[]
@@ -68,78 +73,95 @@ model SuperAdmin {
 /// ----------- Admin -----------
 
 model Admin {
-  id              String           @id @default(cuid())
-  createdById     String
+  id              String   @id @default(cuid())
   title           String
   firstName       String
   middleName      String?
   lastName        String
-  officialEmailId String           @unique
+  officialEmailId String   @unique
   personalEmailId String
-  phNo            String
-  alternativePhNo String?
-  createdAt       DateTime         @default(now())
-  personalInfoId  String
-  personalInfo    PersonalInfo     @relation(fields: [personalInfoId], references: [id])
-  permissions     AdminPermissions @relation(fields: [adminPermissionsId], references: [id])
+  phNo            BigInt
+  alternativePhNo BigInt?
+  createdAt       DateTime @default(now())
+  createdById     String
 
   createdBy          SuperAdmin             @relation("SuperAdminCreatedAdmins", fields: [createdById], references: [id])
-  createdDatasets    Dataset[]              @relation("CreatedDatasets")
+  personalInfo       PersonalInfo?          @relation("AdminToPersonalInfo")
+  permissions        AdminPermissions?      @relation("AdminToPermissions")
+  Auth               Auth[]                 @relation("AdminToAuth")
   updatedDatasets    DatasetUpdateHistory[] @relation("UpdatedDatasets")
   updatedPermissions AdminPermissions[]     @relation("UpdatedByAdmin")
-  Auth               Auth[]
-  adminPermissionsId String
+  birthInfo          BirthInfo[]
 }
 
 /// ----------- Admin Permissions -----------
 
 model AdminPermissions {
-  id            String            @id @default(cuid())
-  permissions   AdminPermission[]
-  updatedById   String
-  lastUpdatedAt DateTime          @default(now())
+  id                    String            @id @default(cuid())
+  permissions           AdminPermission[]
+  updatedBySuperAdminId String?
+  updatedByAdminId      String?
+  lastUpdatedAt         DateTime          @default(now())
 
-  updatedBySuperAdmin SuperAdmin? @relation("UpdatedBySuperAdmin", fields: [updatedById], references: [id], map: "AdminPermissions_updatedBySuperAdmin_fkey")
-  updatedByAdmin      Admin?      @relation("UpdatedByAdmin", fields: [updatedById], references: [id], map: "AdminPermissions_updatedByAdmin_fkey")
-  Admin               Admin[]
+  adminId String @unique
+  admin   Admin  @relation("AdminToPermissions", fields: [adminId], references: [id], onDelete: Cascade)
+
+  updatedBySuperAdmin SuperAdmin? @relation("UpdatedBySuperAdmin", fields: [updatedBySuperAdminId], references: [id])
+  updatedByAdmin      Admin?      @relation("UpdatedByAdmin", fields: [updatedByAdminId], references: [id], onDelete: SetNull)
 }
 
 /// ----------- Personal Info -----------
-
 model PersonalInfo {
-  id          String       @id @default(cuid())
-  aadharUrl   String
-  panCardUrl  String
+  id          String   @id @default(cuid())
   address     String
+  aadharUrl   String?
+  panCardUrl  String?
   fatherName  String
   motherName  String
-  gender      String
+  gender      Gender
   dob         DateTime
   city        String
   state       String
   country     String
   pinCode     String
   nationality String
-  SuperAdmin  SuperAdmin[]
-  Admin       Admin[]
+
+  adminId      String?     @unique
+  superAdminId String?     @unique
+  admin        Admin?      @relation("AdminToPersonalInfo", fields: [adminId], references: [id], onDelete: Cascade)
+  superAdmin   SuperAdmin? @relation("SuperAdminToPersonalInfo", fields: [superAdminId], references: [id], onDelete: Cascade)
 }
 
 /// ----------- User -----------
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  phNo      String
+  id    String @id @default(cuid())
+  name  String
+  email String @unique
+  phNo  BigInt
+
   createdAt DateTime @default(now())
 
-  datasets DatasetLookup[]
-  cart     Cart[]
-  Auth     Auth[]
+  datasets        DatasetLookup[]
+  cart            Cart[]
+  Auth            Auth[]
+  UserProfileInfo UserProfileInfo?
+}
+
+model UserProfileInfo {
+  id                  String  @id @default(cuid())
+  userId              String  @unique
+  bio                 String?
+  city                String?
+  country             String?
+  gender              Gender?
+  occupation          String?
+  institution         String?
+  userProfilePhotoURL String?
+  user                User?   @relation(fields: [userId], references: [id])
 }
 
 /// ----------- Password Details -----------
-
 model PasswordDetails {
   id                      String    @id @default(cuid())
   userId                  String    @unique
@@ -151,82 +173,102 @@ model PasswordDetails {
 }
 
 /// ----------- Dataset -----------
-
 model Dataset {
   id                String  @id @default(cuid())
   title             String
-  aboutDatasetId    String
   primaryCategoryId String
   sourceId          String
   price             Float
   isPaid            Boolean
-  sampleUrl         String
   license           String
-  birthInfoId       String
-  locationId        String
-  securityId        String
-  superTypes        String
+  superType         String
+  datasetUniqueId   String  @unique
+  uploaded          Boolean @default(false)
 
-  aboutDataset AboutDataset @relation(fields: [aboutDatasetId], references: [id])
-  birthInfo    BirthInfo    @relation(fields: [birthInfoId], references: [id], map: "Dataset_birthInfoId_custom_fkey")
-  location     Location     @relation(fields: [locationId], references: [id])
-  security     Security     @relation(fields: [securityId], references: [id])
-  source       Source       @relation(fields: [sourceId], references: [id])
+  primaryCategory Category @relation("DatasetPrimaryCategory", fields: [primaryCategoryId], references: [id])
+  source          Source   @relation("DatasetSource", fields: [sourceId], references: [id])
 
-  datasetLookups DatasetLookup[]
-  categories     CategoryLookup[]
-  updateHistory  DatasetUpdateHistory[]
-  carts          Cart[]
-
-  creatorAdmin Admin @relation("CreatedDatasets", fields: [birthInfoId], references: [id])
+  aboutDatasetInfo     AboutDatasetInfo?
+  birthInfo            BirthInfo?
+  locationInfo         LocationInfo?
+  securityInfo         SecurityInfo?
+  DatasetUpdateHistory DatasetUpdateHistory[]
+  DatasetLookup        DatasetLookup[]
+  CategoryLookup       CategoryLookup[]
+  Cart                 Cart[]
 }
 
-/// ----------- About Dataset -----------
+model AboutDatasetInfo {
+  id          String @id @default(cuid())
+  datasetId   String @unique
+  overview    String
+  description String
+  dataQuality String
 
-model AboutDataset {
-  id           String @id @default(cuid())
-  overview     String
-  description  String
-  dataQuality  String
-  featuresId   String
-  dataFormatId String
-
-  features   Features   @relation(fields: [featuresId], references: [id])
-  dataFormat DataFormat @relation(fields: [dataFormatId], references: [id])
-  Dataset    Dataset[]
+  dataset        Dataset         @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  dataFormatInfo DataFormatInfo?
+  features       Features[]
 }
 
-/// ----------- Features -----------
+model DataFormatInfo {
+  id               String           @id @default(cuid())
+  aboutDatasetId   String           @unique
+  rows             Int
+  cols             Int
+  fileFormat       String
+  aboutDatasetInfo AboutDatasetInfo @relation(fields: [aboutDatasetId], references: [id], onDelete: Cascade)
+}
 
 model Features {
-  id           String         @id @default(cuid())
-  content      String
-  AboutDataset AboutDataset[]
+  id               String           @id @default(cuid())
+  aboutId          String
+  content          String
+  AboutDatasetInfo AboutDatasetInfo @relation(fields: [aboutId], references: [id], onDelete: Cascade)
 }
-
-/// ----------- Data Format -----------
-
-model DataFormat {
-  id           String         @id @default(cuid())
-  rows         Int
-  cols         Int
-  fileFormat   String
-  AboutDataset AboutDataset[]
-}
-
-/// ----------- Birth Info -----------
 
 model BirthInfo {
-  id                 String    @id @default(cuid())
+  id                 String   @id @default(cuid())
+  datasetId          String   @unique
   creatorAdminId     String
-  createdAt          DateTime  @default(now())
+  createdAt          DateTime @default(now())
   lastUpdaterAdminId String
-  lastUpdatedAt      DateTime  @default(now())
-  Dataset            Dataset[]
+  lastUpdatedAt      DateTime @default(now())
+
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  Admin   Admin?  @relation(fields: [creatorAdminId], references: [id])
+}
+
+model LocationInfo {
+  id        String @id @default(cuid())
+  datasetId String @unique
+  region    String
+  country   String
+  state     String
+  city      String
+
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+}
+
+model SecurityInfo {
+  id                      String @id @default(cuid())
+  datasetId               String @unique
+  currentEncryptionSecret String
+  masterSecret            String
+
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+}
+
+/// ----------- Source -----------
+model Source {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  // Updated relation name to avoid conflicts
+  datasets Dataset[] @relation("DatasetSource")
 }
 
 /// ----------- Dataset Update History -----------
-
 model DatasetUpdateHistory {
   id        String   @id @default(cuid())
   datasetId String
@@ -234,7 +276,7 @@ model DatasetUpdateHistory {
   reason    String
   updatedAt DateTime @default(now())
 
-  dataset Dataset @relation(fields: [datasetId], references: [id])
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   admin   Admin   @relation("UpdatedDatasets", fields: [adminId], references: [id])
 }
 
@@ -247,7 +289,9 @@ model DatasetLookup {
   purchaseDate DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id])
-  dataset Dataset @relation(fields: [datasetId], references: [id])
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, datasetId])
 }
 
 /// ----------- Category Lookup -----------
@@ -257,47 +301,23 @@ model CategoryLookup {
   datasetId  String
   categoryId String
 
-  dataset  Dataset  @relation(fields: [datasetId], references: [id])
+  dataset  Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([datasetId, categoryId])
 }
 
 /// ----------- Category -----------
 
 model Category {
-  id             String           @id @default(cuid())
-  name           String
-  createdAt      DateTime         @default(now())
-  createdBy      String
-  CategoryLookup CategoryLookup[]
-}
-
-/// ----------- Source -----------
-
-model Source {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  createdAt DateTime  @default(now())
-  Dataset   Dataset[]
-}
+  createdAt DateTime @default(now())
+  createdBy String
 
-/// ----------- Location -----------
-
-model Location {
-  id      String    @id @default(cuid())
-  region  String
-  country String
-  state   String
-  city    String
-  Dataset Dataset[]
-}
-
-/// ----------- Security -----------
-
-model Security {
-  id                      String    @id @default(cuid())
-  currentEncryptionSecret String
-  masterSecret            String
-  Dataset                 Dataset[]
+  // Updated relations
+  primaryDatasets Dataset[]        @relation("DatasetPrimaryCategory")
+  CategoryLookup  CategoryLookup[]
 }
 
 /// ----------- Cart -----------
@@ -310,5 +330,7 @@ model Cart {
   isInCart  Boolean
 
   user    User    @relation(fields: [userId], references: [id])
-  dataset Dataset @relation(fields: [datasetId], references: [id])
+  dataset Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, datasetId])
 }

@@ -1,0 +1,1 @@
+export const CIPHER_SHIFT = 3;

@@ -2,7 +2,7 @@ import express from 'express';
 
 // TODO: OM - correct the constants here as they are mixing and does not make any sense
 export type UserType = 'admin' | 'user' | 'superadmin';
-export type ActionPath = 'operations' | 'stats' | 'public';
+export type ActionPath = 'operations' | 'stats' | 'public' | 'registration' | 'profile';
 export type UserActionCategory = 'login' | 'signup' | 'settings' | 'dashboard' | 'datasets' | 'users';
 
 type RoutePath = `/${UserType}`;
